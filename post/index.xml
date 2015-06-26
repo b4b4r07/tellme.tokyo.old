@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on TELLME.TOKYO</title>
+    <link>http://tellme.tokyo/post/</link>
+    <description>Recent content in Posts on TELLME.TOKYO</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Tue, 23 Jun 2015 15:47:51 +0900</lastBuildDate>
+    <atom:link href="http://tellme.tokyo/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>開発者から見た UNIX 哲学とコマンドラインツールと Go言語</title>
+      <link>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</link>
+      <pubDate>Tue, 23 Jun 2015 15:47:51 +0900</pubDate>
+      
+      <guid>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</guid>
+      <description>
+
+&lt;p&gt;CLI（Command-line Interface）ツールが好きで自分でもよく作るし，よく使っている．最近は高速で，かつクロスコンパイルが容易な Go 言語がその開発に使われることが多いようだ．実際に筆者も拙劣ながら Go 言語で何個かリリースしている．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/gch&#34;&gt;b4b4r07/gch&lt;/a&gt; &lt;a href=&#34;https://github.com/b4b4r07/gch&#34; title=&#34;b4b4r07/gch - GitHub&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/b4b4r07/gch.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/goal&#34;&gt;b4b4r07/goal&lt;/a&gt; &lt;a href=&#34;https://github.com/b4b4r07/goal&#34; title=&#34;b4b4r07/goal - GitHub&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/b4b4r07/goal.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34;&gt;b4b4r07/gomi&lt;/a&gt; &lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi - GitHub&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/b4b4r07/gomi.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;CLI ツールの歴史はとても長く，過去たくさんの素晴らしい資産と独自の哲学がある．現代にいきる我々も当然その思想に従うべきで，CLI ツールを作るならその哲学を踏襲するのが常識だ．&lt;/p&gt;
+
+&lt;h1 id=&#34;unix-哲学:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;UNIX 哲学&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;em&gt;Small is beautiful.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Make each program do one thing well.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Build a prototype as soon as possible.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Choose portability over efficiency.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Store data in flat text files.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Use software leverage to your advantage.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Use shell scripts to increase leverage and portability.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Avoid captive user interfaces.&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Make every program a Filter.&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これは UNIX 哲学の基本思想で Go 言語ツールを作る上でいいように解釈すると，以下のことだと思っている．&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Minimal で Enough なソフトウェア設計であること&lt;/li&gt;
+&lt;li&gt;他のプログラムと協調できるように，標準入出力を活用せよ&lt;/li&gt;
+&lt;li&gt;外部データを使うならフラットテキスト（JSON、YAML、TOML など）を利用せよ&lt;/li&gt;
+&lt;li&gt;ポータビリティを優先し，苦痛なくインストールできることを目指せ&lt;/li&gt;
+&lt;li&gt;対話インタフェースは避け，フィルタとして振る舞えること&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;これについて言及している記事があるのでこれらも非常に参考になる．また，&lt;a href=&#34;http://deeeet.com&#34;&gt;@deeeet&lt;/a&gt; (a.k.a. Taichi Nakashima) さんは CLI デベロッパとしてとても有益な記事・ツールが多いのでマスト watch だ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://deeeet.com/talking/2014/08/31/yapc-2014/&#34;&gt;コマンドラインツールについて語るときに僕の語ること&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://deeeet.com/writing/2014/08/27/cli-reference/&#34;&gt;コマンドラインツールを作るときに参考にしている資料&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;コマンドラインツールをつくるときのガイドライン:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;コマンドラインツールをつくるときのガイドライン&lt;/h1&gt;
+
+&lt;p&gt;Go 言語で作る場合も，ご多分に漏れずこの UNIX 哲学をベースに作っていくことになる．しかし，これは Go 言語だけの話ではないが，コマンドラインツールを作る上で At least であり Most important な概念がある．&lt;/p&gt;
+
+&lt;p&gt;それは，&lt;strong&gt;標準入出力をきちんと使い分ける&lt;/strong&gt;ことだ．これに関して，パイプの開発者 M.D.マキルロイも次のように要約している．&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;これがUNIXの哲学である。
+一つのことを行い、またそれをうまくやるプログラムを書け。
+協調して動くプログラムを書け。
+標準入出力（テキスト・ストリーム）を扱うプログラムを書け。標準入出力は普遍的インターフェースなのだ。&lt;/p&gt;
+
+&lt;p&gt;— M. D. マキルロイ、UNIXの四半世紀&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;コマンドラインでは，正常終了をゼロ値，異常終了を非ゼロ値として扱う．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ ./not-found-command
+$ echo $?
+1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;エラーかどうかを判断するのにこの終了ステータスを使うからだ．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ ./not-found-command || echo &amp;quot;Error!&amp;quot;
+Error!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そして，このときのエラーレポートは標準エラー出力に出力するべきだ．以下では，標準出力であるファイルディスクリプタ1番を標準エラー出力である2番に出力先を変更している．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ ./not-found-command || echo &amp;quot;Error!&amp;quot; 1&amp;gt;&amp;amp;2
+Error!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こうすることで，簡単に出力先をコントロールでき，処理を切り分けることができる．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/b4b4r07/items/9ea50f9ff94973c99ebe&#34;&gt;シェルスクリプトを書くときに気をつける9箇条&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/mollifier/items/95a294f95f5977b9d663&#34;&gt;シェルスクリプトのオプション設計ガイドライン&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;go-言語で作る:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;Go 言語で作る&lt;/h1&gt;
+
+&lt;p&gt;標準入出力，特に標準出力と標準エラー出力をきちんと使い分けることは，テスタブルなコマンドラインツールを設計することに直結する．しかし意外とこれが難しく，筆者もどう書けばいいか苦労していた．シェルスクリプトで実装する場合はとても簡単だ．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#...
+
+if [ ! -f &amp;quot;$file&amp;quot; ]; then
+	echo &amp;quot;$file: not found&amp;quot; 1&amp;gt;&amp;amp;2
+	exit 1
+fi
+
+main
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上の例では，特定のファイルが存在しない場合，簡単なエラーレポートを標準エラー出力に流し，ステータスコード &lt;code&gt;1&lt;/code&gt; で &lt;code&gt;exit&lt;/code&gt; している．ちなみに，コマンドラインツールを設計する上で，エラー時の出力は最小限であるべき（静かなエラー）で，正常終了時は出力をしないべきなのである．これは他のツールと協調するため（出力を無視させたり整形させる手間をとらせない）とされている．&lt;/p&gt;
+
+&lt;p&gt;これを Go 言語化する上で難しいのは次の点だ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;終了ステータスをゼロと非ゼロで分ける&lt;/li&gt;
+&lt;li&gt;そのときのエラーレポートは標準エラー出力に行う&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Go 言語では関数の戻り値を複数取れるが，エラーをともなう処理を行う関数の場合，二値目には Error を返すことが一般的だ．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func someFunc() (string, error) {
+	//...
+	if err != nil {
+		return str, err
+	}
+	//...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そしてそれを最終的に一番ユーザに近いレイヤーである &lt;code&gt;main()&lt;/code&gt; で受け取り，エラーレポートとともに，&lt;code&gt;exit&lt;/code&gt; する．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func main() {
+	//...
+	_, err := someFunc(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	//...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;結果としては期待されていた実装ができているように思える．しかし，これはアンテスタブルで，「コマンドラインツールのエラー」としては扱いきれていない．筆者も悩んでいたところ，これもまた &lt;a href=&#34;http://deeeet.com&#34;&gt;@deeeet&lt;/a&gt; さんのエントリではあるが，その問題点を完璧に克服していたので紹介したい．&lt;/p&gt;
+
+&lt;h1 id=&#34;go-言語で設計する:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;Go 言語で設計する&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://deeeet.com/writing/2014/12/18/golang-cli-test/&#34;&gt;Go言語でテストしやすいコマンドラインツールをつくる&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;この記事では&lt;strong&gt;テスタブルな&lt;/strong&gt;ツールづくりにフォーカスしている．また，ファイル構成は最低限2つのファイル，&lt;code&gt;main.go&lt;/code&gt; と終了ステータスと標準入出力をハンドリングした &lt;code&gt;cli.go&lt;/code&gt; から成る．&lt;/p&gt;
+
+&lt;h2 id=&#34;終了ステータスをハンドリングする:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;終了ステータスをハンドリングする&lt;/h2&gt;
+
+&lt;p&gt;まず，問題なのが，終了ステータス値（*zero or non zero*）を Go 言語側から扱えていない点だ．これについて，&lt;code&gt;int&lt;/code&gt; 型の終了値を返す関数（後述するがメソッドとして）を定義する．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func (cli *CLI) Run(args []string) int {
+	//...
+	if _, err := os.Stat(someFile); err != nil {
+		err := fmt.Sprintf(&amp;quot;%s: no such file or directory&amp;quot;, someFile)
+		fmt.Fprintln(cli.errStream, err)
+		return ExitCodeFileNotFound
+	}
+	//...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;os.Exit(1)&lt;/code&gt; するのではなく，&lt;code&gt;return err&lt;/code&gt; するのでもなく，&lt;code&gt;int&lt;/code&gt; でエラーの数値を返すのだ．もちろん，&lt;code&gt;0&lt;/code&gt; 以外の数値であるが，これについても可読性のために以下のように定数として定義しておく．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;const (
+	ExitCodeOK    int = 0
+	ExitCodeError int = 1 + iota
+	ExitCodeFileNotFound
+	ExitCodeParseError
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こうすることで，終了値をエラーハンドリングしやすくなるし，コードとしての見通しも良くなる．エラーレポートに関しては，そのままその関数内で &lt;code&gt;fmt.Fprintf()&lt;/code&gt; して問題ない．端末画面上に出力するだけのステイトメントについては，この場合ハンドリングするべき対象でもないし，そのまま &lt;code&gt;main()&lt;/code&gt; に伝わり，&lt;code&gt;cli.errStream&lt;/code&gt; に出力される．&lt;/p&gt;
+
+&lt;h2 id=&#34;ディスクリプタをハンドリングする:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;ディスクリプタをハンドリングする&lt;/h2&gt;
+
+&lt;p&gt;次は標準入出力の制御だ．&lt;code&gt;os&lt;/code&gt; パッケージにもあるとおり，&lt;code&gt;os.Stdout&lt;/code&gt; と &lt;code&gt;os.Stderr&lt;/code&gt; によって操作できるが，テスタブルに書くためには以下のようにするのがよい．&lt;/p&gt;
+
+&lt;p&gt;まず，&lt;code&gt;io.Writer&lt;/code&gt; の &lt;code&gt;outStream&lt;/code&gt; と &lt;code&gt;errStream&lt;/code&gt; をフィールドとしてもつ構造体 &lt;code&gt;CLI&lt;/code&gt; を定義し，その &lt;code&gt;CLI&lt;/code&gt; 構造体をレシーバとし，またコマンドライン引数をその引数としてもつ &lt;code&gt;Run()&lt;/code&gt; メソッドを定義する．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type CLI struct {
+	outStream, errStream io.Writer
+}
+
+func (cli *CLI) Run(args []string) int {
+	//...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;前項でも書いたとおり &lt;code&gt;Run()&lt;/code&gt; では（オプション引数がある場合はそのパース処理と）具体的なコマンドの処理内容を記述し，戻り値としてステータスコードを返すようにする．&lt;/p&gt;
+
+&lt;p&gt;あとは，&lt;code&gt;main()&lt;/code&gt; 内での記述だが，大方の処理や操作を &lt;code&gt;Run()&lt;/code&gt; メソッドで奪ったのでこれだけでよい．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;//...
+
+func main() {
+    cli := &amp;amp;CLI{
+    	outStream: os.Stdout,
+    	errStream: os.Stderr,
+    }
+    os.Exit(cli.Run(os.Args[1:]))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;コマンドラインツールをテストする:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;コマンドラインツールをテストする&lt;/h2&gt;
+
+&lt;p&gt;コマンドラインツールにおいてもテストは大事だが本稿の趣旨から外れるのと，先に挙げた記事と丸かぶりしかねなくなるので，それについては省略する．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/yuya_takeyama/items/c4211fa77488cb6915ec&#34;&gt;I/O を伴うテストには bytes.Buffer が便利&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://yuya-takeyama.github.io/presentations/2014/11/30/gocon_2014_autumn/&#34;&gt;Unit-testing programs depend on I/O in Go&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://deeeet.com/writing/2014/12/18/golang-cli-test/&#34;&gt;Go言語でテストしやすいコマンドラインツールをつくる&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;優れたコマンドラインツールとは:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;優れたコマンドラインツールとは&lt;/h1&gt;
+
+&lt;p&gt;UNIX 哲学に準拠していて，ストリームをきちんと理解できているツールは素晴らしい．筆者自身も試行錯誤しながら作っている．これは実装言語に依らない思想や考え方なので，CLI デベロッパは「UNIX という考え方」を参照するべきだ．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://ecx.images-amazon.com/images/I/518ME653H3L.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;参考:af878eaf4b795ed1048a236a234c7ca6&#34;&gt;参考&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.songmu.jp/riji/entry/2015-04-18-commandline-tool-design.html&#34;&gt;コマンドラインツールを作るときに考えているちょっとした設計方針&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://yohshiy.blog.fc2.com/blog-entry-260.html&#34;&gt;コマンドラインプログラムにおける引数、オプションなどの標準仕様&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://yuuki.hatenablog.com/entry/go-cli-unix&#34;&gt;Go言語によるCLIツール開発とUNIX哲学について&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Vim プラグイン開発の Tips</title>
+      <link>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</link>
+      <pubDate>Wed, 17 Jun 2015 23:10:42 +0900</pubDate>
+      
+      <guid>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</guid>
+      <description>
+
+&lt;p&gt;プラグイン開発が盛んなエディタの一つに Vim がある．&lt;/p&gt;
+
+&lt;p&gt;筆者も拙劣ながら2つほどリリースした．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/vim-shellutils&#34;&gt;b4b4r07/vim-shellutils&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/vim-autocdls&#34;&gt;b4b4r07/vim-autocdls&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前者はシェルコマンドを Vim script で関数定義してエミュレートしたものだ．Vim に最適化されているため，&lt;code&gt;system()&lt;/code&gt; や &lt;code&gt;!cmd&lt;/code&gt; するよりも便利になっている．後者は，それを応用したもので &lt;code&gt;:cd&lt;/code&gt; するたびに &lt;code&gt;:Ls&lt;/code&gt; するようにしたプラグインだ．&lt;/p&gt;
+
+&lt;p&gt;さて，宣伝はここまでにして，Vim プラグインを作成するとき，普段と同じ環境（つまり同じ &lt;code&gt;.vimrc&lt;/code&gt; を使用し，普段通りのプラグインを読み込んでいる状態）で作っていると何かと弊害が起こりがちである．Vim の動作も安定しない．またプラグイン作成を一時中断して，他のタスクを処理するために Vim を使うとなると，開発中のプラグインが作業に干渉したりして不便な状態を強いられることが多い．&lt;/p&gt;
+
+&lt;p&gt;ここらへんをどう処理しているか，アマチュア Vim プラグイン開発者にとって凄く気になるところだけれど，意外とノウハウは公開されていない（おそらく有名所だと @thinca さんくらい）．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/thinca/20100216/1266294717&#34;&gt;Vim プラグインの開発スタイルのお話&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;vim-プラグインの開発スタイル:51dc78c8c8dd9f21c609ff2dd8234fa1&#34;&gt;Vim プラグインの開発スタイル&lt;/h1&gt;
+
+&lt;p&gt;筆者の場合，手探りながらも個人的には満足できるスタイルが確立できたので紹介することにした．&lt;/p&gt;
+
+&lt;p&gt;開発スタイルの落とし所としてはこうだ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;.vimrc&lt;/code&gt; は普段通りのものを使いたい
+
+&lt;ul&gt;
+&lt;li&gt;開発するときに読み込む &lt;code&gt;.vimrc&lt;/code&gt; を作るのは面倒だし，それを読み込ませた Vim を起動するのはもっと面倒だ&lt;/li&gt;
+&lt;li&gt;それに普段の使い勝手（コマンドやキーバインド）を失いたくない&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;開発中は余計な操作を強いられずに，&lt;code&gt;.vimrc&lt;/code&gt; を制限したい
+
+&lt;ul&gt;
+&lt;li&gt;作成中のプラグインの機能を逐一確かめるために，既存 Vim プラグインは読み込まない&lt;/li&gt;
+&lt;li&gt;その制限をシームレスに息を吸うかのごとく設けたい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そこで，&lt;code&gt;.vimrc&lt;/code&gt; の冒頭に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;let s:true  = 1
+let s:false = 0
+
+let s:vimrc_plugin_on = get(g:, &#39;vimrc_plugin_on&#39;, s:true)
+
+if len(findfile(&amp;quot;.development.vim&amp;quot;, &amp;quot;.;&amp;quot;)) &amp;gt; 0
+  let s:vimrc_plugin_on = s:false
+  set runtimepath&amp;amp;
+  execute &#39;set runtimepath+=&#39; getcwd()
+  for s:plugin in split(glob(getcwd() . &amp;quot;/*&amp;quot;), &#39;\n&#39;)
+    execute &#39;set runtimepath+=&#39; . s:plugin
+  endfor
+endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を記述する．&lt;/p&gt;
+
+&lt;p&gt;やっていることは至って単純で，&lt;code&gt;.development.vim&lt;/code&gt; が置かれたディレクトリ配下はすべて &lt;code&gt;s:vimrc_plugin_on&lt;/code&gt; を &lt;code&gt;false&lt;/code&gt; に制限する．もちろんデフォルトは &lt;code&gt;true&lt;/code&gt; だ．&lt;/p&gt;
+
+&lt;p&gt;そして，&lt;code&gt;.vimrc&lt;/code&gt; にあるプラグインの設定を記述している箇所に，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt; if has(&#39;vim_starting&#39;) &amp;amp;&amp;amp; isdirectory($NEOBUNDLEPATH)
++  if s:vimrc_plugin_on == s:true
+     set runtimepath+=$NEOBUNDLEPATH
++  endif
+ endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上記の &lt;code&gt;if&lt;/code&gt; 文を加える．これによって読み込むプラグインの置かれたディレクトリを操作している．&lt;/p&gt;
+
+&lt;p&gt;たったこれだけで Vim の様相は大きく変わる．&lt;code&gt;g:vimrc_plugin_on&lt;/code&gt; が &lt;code&gt;true&lt;/code&gt; だと，今までどおりの Vim だけれど，&lt;code&gt;false&lt;/code&gt; になると &lt;code&gt;.development.vim&lt;/code&gt; が置かれたディレクトリにあるディレクトリしかプラグインと認識されないからだ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:true&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/vim_plugin_on/true.png&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:false&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/vim_plugin_on/false.png&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;画像のとおり &lt;code&gt;true&lt;/code&gt; のときは @thinca さん作の &lt;a href=&#34;https://github.com/thinca/vim-splash&#34;&gt;vim-splash&lt;/a&gt; が読み込まれ，AA が表示されている．一方で，&lt;code&gt;false&lt;/code&gt; のとき，つまり &lt;code&gt;.development.vim&lt;/code&gt; が存在するとき（プラグイン開発時）にはそれが読み込まれていないことがわかる．&lt;/p&gt;
+
+&lt;p&gt;この方法を取ることで，Vim プラグイン開発中は既存のプラグインの読み込みを制限できる．開発はじめに開発ディレクトリに &lt;code&gt;.development.vim&lt;/code&gt; を作成するだけでいい．&lt;code&gt;touch&lt;/code&gt; コマンドでできる．開発が終われば削除するだけでいい．&lt;/p&gt;
+
+&lt;p&gt;もし，既存の Vim プラグインを使用したい場合，正規のプラグインディレクトリから開発ディレクトリまでシンボリックリンクをはればよい．そのプラグインは読み込まれるので，使用することができる．&lt;/p&gt;
+
+&lt;p&gt;この開発スタイルは正しいのかは分からない．ただ，こうすることで自分のケースでは何の不便もなく開発に打ち込むことができる．開発を一旦中断する場合，つまり他のディレクトリに移ることで，いつも通りの Vim に戻る．開発中も既存のプラグインさえ使えないものの，他の設定はフルに生きる．&lt;/p&gt;
+
+&lt;p&gt;これ以外のおすすめの手法があればぜひ．&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MacBook 12 inch を買った</title>
+      <link>http://tellme.tokyo/post/2015/06/03/macbook/</link>
+      <pubDate>Wed, 03 Jun 2015 09:44:59 +0900</pubDate>
+      
+      <guid>http://tellme.tokyo/post/2015/06/03/macbook/</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/top.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;5&lt;/sup&gt;&amp;frasl;&lt;sub&gt;20&lt;/sub&gt; に「新しい MacBook」が届いた．Apple のオンラインの &lt;a href=&#34;http://store.apple.com/jp/buy-mac/macbook&#34;&gt;Store&lt;/a&gt; で，実際にポチったのは4/12なので届くのには1ヶ月以上かかったことになる．&lt;/p&gt;
+
+&lt;p&gt;スペックはこの通りだ．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/spec.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;CPU を最大の 1.3GHz に引き上げた．処理スピードは速いに越したことはない．それと，ここに載っていない変更点として，キーボードを US 配列にした．これはデザイン的な動機もあるが，主として私の用途がプログラミング関連だからだ．デスクトップ PC にも US 配列のキーボードを使用している．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/compare.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&#34;why:bc721527f93562e0bade042c76b30844&#34;&gt;Why&lt;/h1&gt;
+
+&lt;p&gt;なぜ，この賛否両輪ある新しい無印の MacBook を買ったかというと，それまで使っていた MacBook Air (13 inch, Mid 2012) に不満が溜まってきていたからだ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;13インチはモバイル機としては大きすぎる&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;メモリが 4GB&lt;/strong&gt;（初のモバイル Mac だったため勝手がわからなかった）&lt;/li&gt;
+&lt;li&gt;キーボード（特にスペースキー）の反応が悪くなり始めた&lt;/li&gt;
+&lt;li&gt;MacBook がかっこ良すぎた&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上2つが特に大きな動機だった．MacBook が発表される前，一度 MacBook Air 11 inch を検討していたくらいに軽さ・小ささを求めていた．&lt;/p&gt;
+
+&lt;p&gt;以前，iPad（Airの前）を所有していた．買った当初は頻繁に持ち歩いていたもの，その重さや大きさからか徐々に持ち運ばなくなっていた．そこで，それを売っぱらって iPad mini を買うことにした．iPad mini にしてからは持ち歩くことが増え，また片手でひょいと持ちやすかったため，トイレやらキッチンやら隙間時間を生み出しそうなところには常に連れ歩いた．この携帯性がノート PC にも欲しかった．出かけるとき，ひょいと「PC 使うかわかんないけど持っていくか」となりたかったのだ．&lt;/p&gt;
+
+&lt;h1 id=&#34;いざ買ってみて:bc721527f93562e0bade042c76b30844&#34;&gt;いざ買ってみて&lt;/h1&gt;
+
+&lt;p&gt;満足か，後悔か．もちろん大満足である．&lt;strong&gt;とにかく軽くて小さい Mac PC（UNIX 端末）が欲しい人にはピッタリ&lt;/strong&gt;なノート PC だと思う．賛否両論あるポイントを中心にレビューしてみる．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/starbucks.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;usb-c:bc721527f93562e0bade042c76b30844&#34;&gt;USB-C&lt;/h2&gt;
+
+&lt;p&gt;USB-C はまったく新しい規格だ．USB 系の正統進化で，リバーシブルに着脱でき，また給電からデータ転送までマルチな役割を一手に担う．MacBook では，その新しい規格のポートをたったひとつしか採用しなかったことで大きな論争をよんだ．&lt;/p&gt;
+
+&lt;p&gt;新しい MacBook は拡張性を犠牲に薄さ・軽さを手に入れた．…とされているが，私はそれを犠牲と捉えていない．むしろ不必要な時代に突入してきて，次第に淘汰されるものだから先取りして排除したに過ぎない，と考えている．&lt;/p&gt;
+
+&lt;p&gt;実際に普段使いでもそんなに困らない．「そんなに」としたのは全く困らないわけではないからだ．後述するが，家では USB-C Digital AV Multiport アダプタをかませて，HDMI に外部ディスプレイ，USB-A に外部キーボード（HHKB Pro2），USB-C に充電ケーブルをつないでいる．この環境で，外付け HDD や，USB メモリを繋ぎたい，となると一度外部キーボードを外すことになる．その局面は少ないにせよ，ゼロではない．こうなったときは不便さを感じる．&lt;/p&gt;
+
+&lt;p&gt;しかし，ワイヤレス化が進むなか多くの場合，USB-C ひとつでも困ることは少ない．&lt;/p&gt;
+
+&lt;h2 id=&#34;core-m-cpu:bc721527f93562e0bade042c76b30844&#34;&gt;Core M CPU&lt;/h2&gt;
+
+&lt;p&gt;Core M の CPU はタブレットにも採用される CPU らしい．冷却の必要もあまりないためファンレス設計も可能であるが，パワー不足感が否めなかった．&lt;/p&gt;
+
+&lt;p&gt;事実，MacBook が発売される前に，スコアに奮わない内容のベンチマーク記事が数多く出回った．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.danshihack.com/2015/04/03/junp/macbook-rumour-2.html&#34;&gt;新型MacBookのベンチマーク公開！2011年モデルのMacBook Airを下回る&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gori.me/macbook/74114&#34;&gt;12インチ型MacBookのベンチマークスコアが公開！「MacBook Air」の2011年モデルを下回る結果&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gori.me/macbook/74771&#34;&gt;12インチ型MacBookの下位モデル，「iPad Air 2」と同等のCPU性能&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gori.me/macbook/74205&#34;&gt;12インチ型MacBook，CTOモデルのベンチマークスコアが公開！「MacBook Air (Early 2015)」と同等の性能か？！&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.danshihack.com/2015/04/05/junp/macbooku-rumour.html&#34;&gt;新型MacBookのCTOモデルはMacBook Air（Early 2015）に近い性能&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;実際，どうだったか．&lt;/p&gt;
+
+&lt;p&gt;全くの無問題と言っていい．ただし，これは個々人の使い方に大きく左右される．また，私は先の記事を踏まえ，1.3GHz にアップグレードしているため，最下位モデル（1.1GHz）との使用感とはまた変わってくる．&lt;/p&gt;
+
+&lt;p&gt;普段，Mac を使うとき，プログラミング関連の用途で使用する．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Safari（タブ10〜20くらい）&lt;/li&gt;
+&lt;li&gt;Terminal.app（&lt;code&gt;tmux&lt;/code&gt; 上にプロセス多数）&lt;/li&gt;
+&lt;li&gt;Byword（ブログや Qiita に使用する）&lt;/li&gt;
+&lt;li&gt;MacDown（README を書くときに使用する）&lt;/li&gt;
+&lt;li&gt;iMessage&lt;/li&gt;
+&lt;li&gt;LINE&lt;/li&gt;
+&lt;li&gt;Pocket&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;少なくともこのくらいのアプリは立ち上げている．ブラウザが Safari なのは，電池の減りを気にしているからではなく，メインブラウザだから．最近の Safari はとてもいい．&lt;/p&gt;
+
+&lt;p&gt;更に，家にいるときは USB-C Digital AV Multiport アダプタをかませて，HDMI に外部ディスプレイ，USB-A に外部キーボード（HHKB Pro2），USB-C に充電ケーブルをつないでいる．そして Bluetooth で Magic Trackpad を接続している．Core i5 CPU を積んでいる MacBook Air ですら，外部ディスプレイにつないだ使い方は酷とされている．それなのに，私は MacBook をつないでいる．全く問題ないからだ．カクつくこともなければ，仮想デスクトップをスイッチするときもスムースに切り替わることができる．&lt;/p&gt;
+
+&lt;p&gt;それくらいにはパワーがあると思っていい．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/desktop.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;しかし，Photoshop などの Adobe 製品を多数立ち上げて，Xcode や Eclipse などの IDE で開発して，YouTuber のような動画編集をバリバリして…というような人には向かないかもしれない．もしかしたらある程度は耐えられるのかもしれないが，やったことがないので分からないとしか言えない．そもそも，そういう用途向けには MacBook Pro というラインナップが用意されている．あれは 13 inch でも 1kg ちょっとと，パワーがあるくせに軽くて良い．MacBook の圧倒的手軽さには勝てないが．&lt;/p&gt;
+
+&lt;h2 id=&#34;キーボード:bc721527f93562e0bade042c76b30844&#34;&gt;キーボード&lt;/h2&gt;
+
+&lt;p&gt;キーボードは PC とユーザをつなぐ唯一のインタフェースだ．それが糞だと，その PC を使うことをやめてしまうだろう．これについてはとても不安だった．実際に，店頭で何回も試し打ちで確認した（店頭は JIS 配列であったため普段の感覚を完全には試せなかったが）．&lt;/p&gt;
+
+&lt;p&gt;実際のところ，その心配は無用だった．個人差はあれど，慣れるとむしろこっちのほうが打ちやすい．しかも2,3日で慣れた．ただ，矢印キーについては非常に慣れづらい変更になっているため，はやく Emacs ライクなキーバインドに慣れたほうがいい．Mac OS はデフォルトで Ctrl-A/E/F/B/N/P などのキーバインドをサポートしている．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/keyboard.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;また，個々のキーの下に LED が配置されたらしく，発色がとても綺麗だ．&lt;/p&gt;
+
+&lt;h2 id=&#34;感圧トラックパッド:bc721527f93562e0bade042c76b30844&#34;&gt;感圧トラックパッド&lt;/h2&gt;
+
+&lt;p&gt;Force Click 呼ばれるもので，クリックの強弱を感知できるようになった．電源を落とすとクリックできなくなるという魔法のトラックパッドだ．&lt;/p&gt;
+
+&lt;p&gt;実際のところ，Force Click のあまり恩恵はあまり感じられない．そもそも出番があまりないからだ．つまり，不便にもなっていない．今までと何ら変わらない．「よし，Force Click の機能を使おう」と思わない限り使わない印象だ．その代わり，&lt;strong&gt;どこでもクリックできるようになった&lt;/strong&gt;という機能はとても活躍している．&lt;/p&gt;
+
+&lt;p&gt;ホームポジションに手を置いたまま，左右の親指でカーソルを操作してクリックという芸当ができるようになった．今までのトラックパッドはトラックパッドの下部しか反応しなかったので，一度ホームポジションから手を離す必要があったからだ．&lt;/p&gt;
+
+&lt;h2 id=&#34;バッテリー:bc721527f93562e0bade042c76b30844&#34;&gt;バッテリー&lt;/h2&gt;
+
+&lt;p&gt;以下のようなアプリたち常時立ち上げて使っている．もちろん，もっと他のアプリを立ち上げていることもあれば，少ないこともあるが．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Safari（タブ10〜20くらい）&lt;/li&gt;
+&lt;li&gt;Terminal.app（&lt;code&gt;tmux&lt;/code&gt; 上にプロセス多数）&lt;/li&gt;
+&lt;li&gt;Byword（ブログや Qiita に使用する）&lt;/li&gt;
+&lt;li&gt;MacDown（README を書くときに使用する）&lt;/li&gt;
+&lt;li&gt;iMessage&lt;/li&gt;
+&lt;li&gt;LINE&lt;/li&gt;
+&lt;li&gt;Pocket&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ちょっと使ってみた結果，&lt;strong&gt;2時間43分使って100%→72%&lt;/strong&gt;だった．この時点で&lt;strong&gt;残り時間4:58&lt;/strong&gt;だった．6〜9時間は持ちそうだ．6時間以上も持てば，並みの外出時には充電ケーブルを必要としないだろう．&lt;/p&gt;
+
+&lt;h1 id=&#34;総評:bc721527f93562e0bade042c76b30844&#34;&gt;総評&lt;/h1&gt;
+
+&lt;p&gt;MacBook は使うユーザを選ぶ．冒頭にもあるが，&lt;strong&gt;とにかく軽くて小さい OS X マシンが欲しいなら買い&lt;/strong&gt;だ．絶対に後悔しない．&lt;/p&gt;
+
+&lt;p&gt;このマシンを買うまで，Mac mini (Mid 2012) と MacBook Air (13 inch, Mid 2012) の環境を持っていた．しかし，MacBook を購入してからは，家では外部ディスプレイにつなぐスタイルに変わり，まさかの MacBook メインマシン状態が続いている（本当は iMac 5K が欲しい）．それでいてもパワー不足を感じさせない MacBook は使い方次第ではパワフルにもこなす器用な野郎といったところだ（ただし，1.3GHz に変更している）．&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/tsutaya.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;iPhone ユーザなら少なからずあるであろう，旧端末をみると「ダサい」と感じるアレが Mac にも来たと思っていい．iPhone 6 ユーザなら iPhone 5s/5 を，iPhone 5s/5 ユーザなら iPhone 4s/4 を見たときに「ショボ！」とか「ダッサ！」と思っただろう．今回の MacBook がそれだ．MacBook Air/Pro のキーボードなどをみたときにダサさしか感じない．それだけ，MacBook が洗練されているように見え，買ったことを満足させる UX になっていると言える．&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Golang でコマンドラインにゴミ箱を実装した話</title>
+      <link>http://tellme.tokyo/post/2015/05/22/gomi/</link>
+      <pubDate>Fri, 22 May 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://tellme.tokyo/post/2015/05/22/gomi/</guid>
+      <description>
+
+&lt;h1 id=&#34;まえがき:562e4d040771234bd98b731edec0bf65&#34;&gt;まえがき&lt;/h1&gt;
+
+&lt;p&gt;デスクトップに一際目立つアイコンで鎮座する，&lt;a href=&#34;http://ja.wikipedia.org/wiki/ごみ箱_(GUI)&#34;&gt;ゴミ箱&lt;/a&gt;は使っているだろうか．今となってはゴミ箱は GUI デスクトップの象徴的存在だ．誤削除を防ぐ手段としても，安心した削除支援の存在としても GUI デスクトップに無くてはならない．&lt;/p&gt;
+
+&lt;p&gt;さて，GUI デスクトップに相当する CLI はホームディレクトリだが，これにゴミ箱がないのは不便ではないだろうか．&lt;code&gt;rm&lt;/code&gt; に関してはその概念をなくして削除を行い，他に「ゴミを捨てる」にあたるようなコマンドはない．&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;GUI以前のコマンドラインには、ゴミ箱という考え方はなかった。（と思う）ファイルやフォルダを削除するにはrmコマンドを使っていた。そのまま使えば、rmを実行した瞬間にファイルは削除される。あるいは、-iオプションによって、削除する前に確認メッセージも表示できるが、yを選択した瞬間にファイルは削除される。&lt;/p&gt;
+
+&lt;p&gt;だから、ゴミ箱というフォルダに移動して一時的に保存しておくという考え方は、画期的なことだと思った。なぜなら、間違って必要なファイルを捨ててしまうこともあるからだ。rmコマンドでは削除を取り消せないが、ゴミ箱に移動しただけなら、必要なファイルを元の場所に戻せば救われるのである。この辺は、リアルな世界のゴミ箱の機能に近い。（ゴミ箱をあさった経験は、少なからず誰しもあると思う） via &lt;a href=&#34;http://d.hatena.ne.jp/zariganitosh/20110106/best_trash&#34;&gt;後悔しない最高のゴミ箱環境を模索する&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;むしろなんで今までなかったのだろう．CLI の習熟度に関わらず，まれに重要なファイルを誤って消しそうになることもあるし，他には例えばチルダ付きのファイルを消そう（&lt;code&gt;rm ~/*~&lt;/code&gt;）として余計にスペースが入った（&lt;code&gt;rm ~/* ~&lt;/code&gt;）と，いいようなタイポによる誤削除は往々にしてあり得る．&lt;/p&gt;
+
+&lt;p&gt;筆者にも同様の経験があり，それ以後ゴミ箱を実装したスクリプトを書いて利用していた．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles/blob/master/etc/scripts/rmr.sh&#34;&gt;b4b4r07/rmr.sh&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このスクリプトは，削除に関してはいいのだが（&lt;code&gt;~/.rmtrash&lt;/code&gt; に &lt;em&gt;YYYY/MM/DD/file.H_M_S&lt;/em&gt; でアーカイブする），取り出すときに元ファイルのパス情報その他が失われてしまうため，リストアが困難なのが欠点だった（今は少し改良をしていて &lt;code&gt;peco&lt;/code&gt; 経由でリストアするようになっている）．&lt;/p&gt;
+
+&lt;p&gt;GUI のそれのように CLI でも削除後に簡単に「戻す」ができたら便利だと思い，調べてみたところ以下のリポジトリが GitHub でスターを多く獲得していた．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/andreafrancia/trash-cli&#34;&gt;andreafrancia/trash-cli&lt;/a&gt; &lt;a href=&#34;https://github.com/andreafrancia/trash-cli&#34; title=&#34;andreafrancia/trash-cli&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/andreafrancia/trash-cli.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Command line interface to the freedesktop.org trashcan.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/sindresorhus/trash&#34;&gt;sindresorhus/trash&lt;/a&gt; &lt;a href=&#34;https://github.com/sindresorhus/trash&#34; title=&#34;sindresorhus/trash&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/sindresorhus/trash.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Cross-platform command-line app for moving files and directories to the trash - A safer alternative to &lt;code&gt;rm&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;trash-cli:562e4d040771234bd98b731edec0bf65&#34;&gt;trash-cli&lt;/h1&gt;
+
+&lt;p&gt;前者は Python 製のゴミ箱スクリプトのようだ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;trash-put&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;trash-empty&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;trash-list&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;trash-restore&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;trash-rm&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;詳しいインストール方法は README を参照していただきたいが、&lt;code&gt;easy_install trash-cli&lt;/code&gt; とした後に、5 つの専用コマンドがインストールされ，それぞれを削除やリストアのときに使い分けるようになっている．古典的な実装・Usage と言わざるを得ない感じで，正直 5 つのコマンドを使い分けるのは面倒です。&lt;/p&gt;
+
+&lt;p&gt;加えて，肝心なリストア部分は，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ trash-restore
+0 2007-08-30 12:36:00 /home/andrea/foo
+1 2007-08-30 12:39:41 /home/andrea/bar
+2 2007-08-30 12:39:41 /home/andrea/bar2
+3 2007-08-30 12:39:41 /home/andrea/foo2
+4 2007-08-30 12:39:41 /home/andrea/foo
+What file to restore [0..4]: 4
+$ ls foo
+foo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;といった具合に，復元したいファイルをナンバーで指定して選択できるようになっている．このユーザインターフェイスは「戻す」ことを簡単に行える設計と言える．UNIX の哲学ではインタラクティブなコマンド設計は良しとされないが，今回は対話性が必要なユースケースの一つであろう．&lt;/p&gt;
+
+&lt;p&gt;基本的に Python の実行環境を整えればどこでも動作するが，きちんと動く Python 環境をセットアップするのは（少なくとも筆者は）面倒にしか感じない．&lt;/p&gt;
+
+&lt;p&gt;そしてもうひとつ欠点は開発が停滞している点だ．メンテナンスもされていない．&lt;/p&gt;
+
+&lt;h1 id=&#34;trash:562e4d040771234bd98b731edec0bf65&#34;&gt;trash&lt;/h1&gt;
+
+&lt;p&gt;後者は Node.js によって実現したゴミ箱スクリプトだ．&lt;/p&gt;
+
+&lt;p&gt;OS 標準のゴミ箱に捨てれる点が良い．しかし，リストアができないようだ（OS のゴミ箱の「戻す」機能を使えば可能となるが，GUI 操作を要する）．また，ただゴミ箱に投げるだけなのでファイル名のコンフリクトも発生する．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ trash --help
+
+  Usage
+    trash [--force] &amp;lt;path&amp;gt; [&amp;lt;path&amp;gt; ...]
+
+  Example
+    trash unicorn.png rainbow.png
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;システム連携に目を輝かせたが，実際の使い勝手はよろしくなかった．&lt;/p&gt;
+
+&lt;h1 id=&#34;そこで他の案:562e4d040771234bd98b731edec0bf65&#34;&gt;そこで他の案&lt;/h1&gt;
+
+&lt;p&gt;他にはどんな方法があるのか調べてた．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/rcmdnk/trash&#34;&gt;rcmdnk/trash&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/dankogai/osx-mv2trash&#34;&gt;dankogai/osx-mv2trash&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://launchpad.net/safe-rm&#34;&gt;safe-rm&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;個々人で簡易的に実装したものだったりが多い．筆者のケースを解決するのに満足なツールはなかった．&lt;/p&gt;
+
+&lt;p&gt;そこで，全ての欠点を解消し，尚かつ利点を包括的に取り込んだ，オリジナルのゴミ箱スクリプトを作るしかないと考えた（Unix らしく）．&lt;/p&gt;
+
+&lt;h1 id=&#34;gomi:562e4d040771234bd98b731edec0bf65&#34;&gt;gomi&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/gomi/master/images/gomi_logo.png&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34;&gt;b4b4r07/gomi&lt;/a&gt; &lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/b4b4r07/gomi.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;gomi is a simple trash tool that works on CLI, written in golang&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;コイツはもの凄く便利だ．構想段階ではここまで便利になるとは思わなかった．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;クロスプラットフォーム，Mac でも Windows でも Linux でも&lt;/li&gt;
+&lt;li&gt;シングルバイナリ，バイナリひとつあれば Python も Node.js も要らない&lt;/li&gt;
+&lt;li&gt;リストアが簡単，&lt;a href=&#34;https://github.com/peco/peco&#34;&gt;peco/peco&lt;/a&gt; みたいなセレクタを備える&lt;/li&gt;
+&lt;li&gt;クイックビュー（OS X でいう QuickLook ができる），リストアする前に捨てたファイルの中身を確認&lt;/li&gt;
+&lt;li&gt;リストアしたい複数のファイルを選択して，カレントディレクトリに引っ張ってくるとかできる&lt;/li&gt;
+&lt;li&gt;OS 標準のゴミ箱と連携できる&lt;/li&gt;
+&lt;li&gt;もちろん，リストアは gomi からでも，GUI の「戻す」からでも OK&lt;/li&gt;
+&lt;li&gt;YAML 形式の設定ファイルでカスタマイズできる
+
+&lt;ul&gt;
+&lt;li&gt;例：リストア時に参照するログファイルに追加したくないファイルなど（例えば，.DS_Store といった復元を求めないファイル）&lt;/li&gt;
+&lt;li&gt;例：ゴミ箱に入れるファイルのサイズ上限（デフォルトは1GB）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これだけでもかなり便利です．下の GIF を参照されたい．&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/gomi/master/images/gomi.gif&#34; alt=&#34;b4b4r07/gomi&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;めっちゃ便利．&lt;/p&gt;
+
+&lt;h2 id=&#34;インストール:562e4d040771234bd98b731edec0bf65&#34;&gt;インストール&lt;/h2&gt;
+
+&lt;p&gt;Homebrew の Mac ユーザなら，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ brew tap b4b4r07/gomi
+$ brew install gomi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で OK ．&lt;/p&gt;
+
+&lt;p&gt;Go 言語ユーザや開発者向けには，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ go get -u github.com/b4b4r07/gomi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Go でインストールできる．&lt;/p&gt;
+
+&lt;p&gt;その他のユーザに関しては，各プラットフォーム向けにコンパイルした実行ファイルが GitHub の &lt;a href=&#34;https://github.com/b4b4r07/gomi/releases&#34;&gt;releases page&lt;/a&gt; にアップロードしてあるので，バイナリをダウンロードして &lt;code&gt;$PATH&lt;/code&gt; のどこかに移動すればよい．&lt;/p&gt;
+
+&lt;h2 id=&#34;使い方:562e4d040771234bd98b731edec0bf65&#34;&gt;使い方&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ gomi files    # 削除する（複数ファイルまとめて削除もOK）
+$ gomi -r       # 元ある場所に戻す
+$ gomi -r .     # カレントディレクトリに戻す
+$ gomi -s file  # OS のゴミ箱に捨てる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;詳しくは，&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34;&gt;README.md&lt;/a&gt; まで．&lt;/p&gt;
+
+&lt;h1 id=&#34;最後に:562e4d040771234bd98b731edec0bf65&#34;&gt;最後に&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://qiita.com/b4b4r07/items/3a790fe7e925b4ba14f3&#34;&gt;Go 言語で rm 用ごみ箱ツール gomi を作った&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;一度，Qiita に公開した．この時はまだ β 版だったが，安定版を提供できるところまではきたかなといった感じなので．&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

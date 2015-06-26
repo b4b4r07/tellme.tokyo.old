@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Lato%3a900" rel="stylesheet" type="text/css">
+
+        <link rel="stylesheet" href="/css/sanitize.css">
+        <link rel="stylesheet" href="/css/responsive.css">
+        <link rel="stylesheet" href="/css/highlight_solarized_dark.css">
+        <link rel="stylesheet/less" href="/css/theme.less">
+        <link rel="stylesheet" href="/css/custom.css">
+        <link rel="alternate" href="/index.xml" type="application/rss+xml" title="TELLME.TOKYO">
+        
+        <link rel="stylesheet" href="/css/font-awesome-4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/hover.css">
+        <title>
+            開発者から見た UNIX 哲学とコマンドラインツールと Go言語 | TELLME.TOKYO
+        </title>
+
+        <script src="/js/less.js" type="text/javascript"></script>
+    </head>
+
+
+
+    <body>
+        <div class="container">
+            <header role="banner">
+                <div class="row gutters">
+                    <div id="site-title" class="col span_6">
+                        <h1 class="site-title"><a href="/">TELLME.TOKYO</a></h1>
+                        
+                        
+                    </div>
+                    <div id="social" class="col span_6">
+                        <ul>
+                            <li><a href="https://twitter.com/b4b4r07" target="_blank">Twitter</a></li>
+                            
+                            <li><a href="https://github.com/b4b4r07" target="_blank">GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>開発者から見た UNIX 哲学とコマンドラインツールと Go言語</h1>
+      <div class="meta">
+        Jun 23, 2015 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      
+
+<p>CLI（Command-line Interface）ツールが好きで自分でもよく作るし，よく使っている．最近は高速で，かつクロスコンパイルが容易な Go 言語がその開発に使われることが多いようだ．実際に筆者も拙劣ながら Go 言語で何個かリリースしている．</p>
+
+<ul>
+<li><a href="https://github.com/b4b4r07/gch">b4b4r07/gch</a> <a href="https://github.com/b4b4r07/gch" title="b4b4r07/gch - GitHub"><img src="https://img.shields.io/github/stars/b4b4r07/gch.svg?style=flat-square" alt="" />
+</a></li>
+<li><a href="https://github.com/b4b4r07/goal">b4b4r07/goal</a> <a href="https://github.com/b4b4r07/goal" title="b4b4r07/goal - GitHub"><img src="https://img.shields.io/github/stars/b4b4r07/goal.svg?style=flat-square" alt="" />
+</a></li>
+<li><a href="https://github.com/b4b4r07/gomi">b4b4r07/gomi</a> <a href="https://github.com/b4b4r07/gomi" title="b4b4r07/gomi - GitHub"><img src="https://img.shields.io/github/stars/b4b4r07/gomi.svg?style=flat-square" alt="" />
+</a></li>
+</ul>
+
+<p>CLI ツールの歴史はとても長く，過去たくさんの素晴らしい資産と独自の哲学がある．現代にいきる我々も当然その思想に従うべきで，CLI ツールを作るならその哲学を踏襲するのが常識だ．</p>
+
+<h1 id="unix-哲学:af878eaf4b795ed1048a236a234c7ca6">UNIX 哲学</h1>
+
+<ol>
+<li><em>Small is beautiful.</em></li>
+<li><em>Make each program do one thing well.</em></li>
+<li><em>Build a prototype as soon as possible.</em></li>
+<li><em>Choose portability over efficiency.</em></li>
+<li><em>Store data in flat text files.</em></li>
+<li><em>Use software leverage to your advantage.</em></li>
+<li><em>Use shell scripts to increase leverage and portability.</em></li>
+<li><em>Avoid captive user interfaces.</em></li>
+<li><em>Make every program a Filter.</em></li>
+</ol>
+
+<p>これは UNIX 哲学の基本思想で Go 言語ツールを作る上でいいように解釈すると，以下のことだと思っている．</p>
+
+<ol>
+<li>Minimal で Enough なソフトウェア設計であること</li>
+<li>他のプログラムと協調できるように，標準入出力を活用せよ</li>
+<li>外部データを使うならフラットテキスト（JSON、YAML、TOML など）を利用せよ</li>
+<li>ポータビリティを優先し，苦痛なくインストールできることを目指せ</li>
+<li>対話インタフェースは避け，フィルタとして振る舞えること</li>
+</ol>
+
+<p>これについて言及している記事があるのでこれらも非常に参考になる．また，<a href="http://deeeet.com">@deeeet</a> (a.k.a. Taichi Nakashima) さんは CLI デベロッパとしてとても有益な記事・ツールが多いのでマスト watch だ．</p>
+
+<ul>
+<li><a href="http://deeeet.com/talking/2014/08/31/yapc-2014/">コマンドラインツールについて語るときに僕の語ること</a></li>
+<li><a href="http://deeeet.com/writing/2014/08/27/cli-reference/">コマンドラインツールを作るときに参考にしている資料</a></li>
+</ul>
+
+<h1 id="コマンドラインツールをつくるときのガイドライン:af878eaf4b795ed1048a236a234c7ca6">コマンドラインツールをつくるときのガイドライン</h1>
+
+<p>Go 言語で作る場合も，ご多分に漏れずこの UNIX 哲学をベースに作っていくことになる．しかし，これは Go 言語だけの話ではないが，コマンドラインツールを作る上で At least であり Most important な概念がある．</p>
+
+<p>それは，<strong>標準入出力をきちんと使い分ける</strong>ことだ．これに関して，パイプの開発者 M.D.マキルロイも次のように要約している．</p>
+
+<blockquote>
+<p>これがUNIXの哲学である。
+一つのことを行い、またそれをうまくやるプログラムを書け。
+協調して動くプログラムを書け。
+標準入出力（テキスト・ストリーム）を扱うプログラムを書け。標準入出力は普遍的インターフェースなのだ。</p>
+
+<p>— M. D. マキルロイ、UNIXの四半世紀</p>
+</blockquote>
+
+<p>コマンドラインでは，正常終了をゼロ値，異常終了を非ゼロ値として扱う．</p>
+
+<pre><code class="language-console">$ ./not-found-command
+$ echo $?
+1
+</code></pre>
+
+<p>エラーかどうかを判断するのにこの終了ステータスを使うからだ．</p>
+
+<pre><code class="language-console">$ ./not-found-command || echo &quot;Error!&quot;
+Error!
+</code></pre>
+
+<p>そして，このときのエラーレポートは標準エラー出力に出力するべきだ．以下では，標準出力であるファイルディスクリプタ1番を標準エラー出力である2番に出力先を変更している．</p>
+
+<pre><code class="language-console">$ ./not-found-command || echo &quot;Error!&quot; 1&gt;&amp;2
+Error!
+</code></pre>
+
+<p>こうすることで，簡単に出力先をコントロールでき，処理を切り分けることができる．</p>
+
+<ul>
+<li><a href="http://qiita.com/b4b4r07/items/9ea50f9ff94973c99ebe">シェルスクリプトを書くときに気をつける9箇条</a></li>
+<li><a href="http://qiita.com/mollifier/items/95a294f95f5977b9d663">シェルスクリプトのオプション設計ガイドライン</a></li>
+</ul>
+
+<h1 id="go-言語で作る:af878eaf4b795ed1048a236a234c7ca6">Go 言語で作る</h1>
+
+<p>標準入出力，特に標準出力と標準エラー出力をきちんと使い分けることは，テスタブルなコマンドラインツールを設計することに直結する．しかし意外とこれが難しく，筆者もどう書けばいいか苦労していた．シェルスクリプトで実装する場合はとても簡単だ．</p>
+
+<pre><code class="language-bash">#...
+
+if [ ! -f &quot;$file&quot; ]; then
+	echo &quot;$file: not found&quot; 1&gt;&amp;2
+	exit 1
+fi
+
+main
+</code></pre>
+
+<p>上の例では，特定のファイルが存在しない場合，簡単なエラーレポートを標準エラー出力に流し，ステータスコード <code>1</code> で <code>exit</code> している．ちなみに，コマンドラインツールを設計する上で，エラー時の出力は最小限であるべき（静かなエラー）で，正常終了時は出力をしないべきなのである．これは他のツールと協調するため（出力を無視させたり整形させる手間をとらせない）とされている．</p>
+
+<p>これを Go 言語化する上で難しいのは次の点だ．</p>
+
+<ul>
+<li>終了ステータスをゼロと非ゼロで分ける</li>
+<li>そのときのエラーレポートは標準エラー出力に行う</li>
+</ul>
+
+<p>Go 言語では関数の戻り値を複数取れるが，エラーをともなう処理を行う関数の場合，二値目には Error を返すことが一般的だ．</p>
+
+<pre><code class="language-go">func someFunc() (string, error) {
+	//...
+	if err != nil {
+		return str, err
+	}
+	//...
+}
+</code></pre>
+
+<p>そしてそれを最終的に一番ユーザに近いレイヤーである <code>main()</code> で受け取り，エラーレポートとともに，<code>exit</code> する．</p>
+
+<pre><code class="language-go">func main() {
+	//...
+	_, err := someFunc(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	//...
+}
+</code></pre>
+
+<p>結果としては期待されていた実装ができているように思える．しかし，これはアンテスタブルで，「コマンドラインツールのエラー」としては扱いきれていない．筆者も悩んでいたところ，これもまた <a href="http://deeeet.com">@deeeet</a> さんのエントリではあるが，その問題点を完璧に克服していたので紹介したい．</p>
+
+<h1 id="go-言語で設計する:af878eaf4b795ed1048a236a234c7ca6">Go 言語で設計する</h1>
+
+<ul>
+<li><a href="http://deeeet.com/writing/2014/12/18/golang-cli-test/">Go言語でテストしやすいコマンドラインツールをつくる</a></li>
+</ul>
+
+<p>この記事では<strong>テスタブルな</strong>ツールづくりにフォーカスしている．また，ファイル構成は最低限2つのファイル，<code>main.go</code> と終了ステータスと標準入出力をハンドリングした <code>cli.go</code> から成る．</p>
+
+<h2 id="終了ステータスをハンドリングする:af878eaf4b795ed1048a236a234c7ca6">終了ステータスをハンドリングする</h2>
+
+<p>まず，問題なのが，終了ステータス値（*zero or non zero*）を Go 言語側から扱えていない点だ．これについて，<code>int</code> 型の終了値を返す関数（後述するがメソッドとして）を定義する．</p>
+
+<pre><code class="language-go">func (cli *CLI) Run(args []string) int {
+	//...
+	if _, err := os.Stat(someFile); err != nil {
+		err := fmt.Sprintf(&quot;%s: no such file or directory&quot;, someFile)
+		fmt.Fprintln(cli.errStream, err)
+		return ExitCodeFileNotFound
+	}
+	//...
+</code></pre>
+
+<p><code>os.Exit(1)</code> するのではなく，<code>return err</code> するのでもなく，<code>int</code> でエラーの数値を返すのだ．もちろん，<code>0</code> 以外の数値であるが，これについても可読性のために以下のように定数として定義しておく．</p>
+
+<pre><code class="language-go">const (
+	ExitCodeOK    int = 0
+	ExitCodeError int = 1 + iota
+	ExitCodeFileNotFound
+	ExitCodeParseError
+)
+</code></pre>
+
+<p>こうすることで，終了値をエラーハンドリングしやすくなるし，コードとしての見通しも良くなる．エラーレポートに関しては，そのままその関数内で <code>fmt.Fprintf()</code> して問題ない．端末画面上に出力するだけのステイトメントについては，この場合ハンドリングするべき対象でもないし，そのまま <code>main()</code> に伝わり，<code>cli.errStream</code> に出力される．</p>
+
+<h2 id="ディスクリプタをハンドリングする:af878eaf4b795ed1048a236a234c7ca6">ディスクリプタをハンドリングする</h2>
+
+<p>次は標準入出力の制御だ．<code>os</code> パッケージにもあるとおり，<code>os.Stdout</code> と <code>os.Stderr</code> によって操作できるが，テスタブルに書くためには以下のようにするのがよい．</p>
+
+<p>まず，<code>io.Writer</code> の <code>outStream</code> と <code>errStream</code> をフィールドとしてもつ構造体 <code>CLI</code> を定義し，その <code>CLI</code> 構造体をレシーバとし，またコマンドライン引数をその引数としてもつ <code>Run()</code> メソッドを定義する．</p>
+
+<pre><code class="language-go">type CLI struct {
+	outStream, errStream io.Writer
+}
+
+func (cli *CLI) Run(args []string) int {
+	//...
+}
+</code></pre>
+
+<p>前項でも書いたとおり <code>Run()</code> では（オプション引数がある場合はそのパース処理と）具体的なコマンドの処理内容を記述し，戻り値としてステータスコードを返すようにする．</p>
+
+<p>あとは，<code>main()</code> 内での記述だが，大方の処理や操作を <code>Run()</code> メソッドで奪ったのでこれだけでよい．</p>
+
+<pre><code class="language-go">//...
+
+func main() {
+    cli := &amp;CLI{
+    	outStream: os.Stdout,
+    	errStream: os.Stderr,
+    }
+    os.Exit(cli.Run(os.Args[1:]))
+}
+</code></pre>
+
+<h2 id="コマンドラインツールをテストする:af878eaf4b795ed1048a236a234c7ca6">コマンドラインツールをテストする</h2>
+
+<p>コマンドラインツールにおいてもテストは大事だが本稿の趣旨から外れるのと，先に挙げた記事と丸かぶりしかねなくなるので，それについては省略する．</p>
+
+<ul>
+<li><a href="http://qiita.com/yuya_takeyama/items/c4211fa77488cb6915ec">I/O を伴うテストには bytes.Buffer が便利</a></li>
+<li><a href="https://yuya-takeyama.github.io/presentations/2014/11/30/gocon_2014_autumn/">Unit-testing programs depend on I/O in Go</a></li>
+<li><a href="http://deeeet.com/writing/2014/12/18/golang-cli-test/">Go言語でテストしやすいコマンドラインツールをつくる</a></li>
+</ul>
+
+<h1 id="優れたコマンドラインツールとは:af878eaf4b795ed1048a236a234c7ca6">優れたコマンドラインツールとは</h1>
+
+<p>UNIX 哲学に準拠していて，ストリームをきちんと理解できているツールは素晴らしい．筆者自身も試行錯誤しながら作っている．これは実装言語に依らない思想や考え方なので，CLI デベロッパは「UNIX という考え方」を参照するべきだ．</p>
+
+<p><img src="http://ecx.images-amazon.com/images/I/518ME653H3L.jpg" alt="" />
+</p>
+
+<h2 id="参考:af878eaf4b795ed1048a236a234c7ca6">参考</h2>
+
+<ul>
+<li><a href="http://www.songmu.jp/riji/entry/2015-04-18-commandline-tool-design.html">コマンドラインツールを作るときに考えているちょっとした設計方針</a></li>
+<li><a href="http://yohshiy.blog.fc2.com/blog-entry-260.html">コマンドラインプログラムにおける引数、オプションなどの標準仕様</a></li>
+<li><a href="http://yuuki.hatenablog.com/entry/go-cli-unix">Go言語によるCLIツール開発とUNIX哲学について</a></li>
+</ul>
+
+    </article>
+    
+ <aside><div id="disqus_thread"></div></aside> 
+
+<script type="text/javascript">
+     
+    var disqus_shortname = 'tellmetokyo';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+  </main>
+
+
+  
+  <footer role="contentinfo">
+    <div class="header-logo" style="text-align:center;">
+      <img src="/images/logo.jpg" width="64" height="64"><br>
+      Written by b4b4r07
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-XXXXXXXX-X', 'auto');
+	ga('send', 'pageview');
+</script>
+
+</body>
+</html>
+

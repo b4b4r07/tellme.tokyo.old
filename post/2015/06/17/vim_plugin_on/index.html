@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Lato%3a900" rel="stylesheet" type="text/css">
+
+        <link rel="stylesheet" href="/css/sanitize.css">
+        <link rel="stylesheet" href="/css/responsive.css">
+        <link rel="stylesheet" href="/css/highlight_solarized_dark.css">
+        <link rel="stylesheet/less" href="/css/theme.less">
+        <link rel="stylesheet" href="/css/custom.css">
+        <link rel="alternate" href="/index.xml" type="application/rss+xml" title="TELLME.TOKYO">
+        
+        <link rel="stylesheet" href="/css/font-awesome-4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/hover.css">
+        <title>
+            Vim プラグイン開発の Tips | TELLME.TOKYO
+        </title>
+
+        <script src="/js/less.js" type="text/javascript"></script>
+    </head>
+
+
+
+    <body>
+        <div class="container">
+            <header role="banner">
+                <div class="row gutters">
+                    <div id="site-title" class="col span_6">
+                        <h1 class="site-title"><a href="/">TELLME.TOKYO</a></h1>
+                        
+                        
+                    </div>
+                    <div id="social" class="col span_6">
+                        <ul>
+                            <li><a href="https://twitter.com/b4b4r07" target="_blank">Twitter</a></li>
+                            
+                            <li><a href="https://github.com/b4b4r07" target="_blank">GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>Vim プラグイン開発の Tips</h1>
+      <div class="meta">
+        Jun 17, 2015 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      
+
+<p>プラグイン開発が盛んなエディタの一つに Vim がある．</p>
+
+<p>筆者も拙劣ながら2つほどリリースした．</p>
+
+<ul>
+<li><a href="https://github.com/b4b4r07/vim-shellutils">b4b4r07/vim-shellutils</a></li>
+<li><a href="https://github.com/b4b4r07/vim-autocdls">b4b4r07/vim-autocdls</a></li>
+</ul>
+
+<p>前者はシェルコマンドを Vim script で関数定義してエミュレートしたものだ．Vim に最適化されているため，<code>system()</code> や <code>!cmd</code> するよりも便利になっている．後者は，それを応用したもので <code>:cd</code> するたびに <code>:Ls</code> するようにしたプラグインだ．</p>
+
+<p>さて，宣伝はここまでにして，Vim プラグインを作成するとき，普段と同じ環境（つまり同じ <code>.vimrc</code> を使用し，普段通りのプラグインを読み込んでいる状態）で作っていると何かと弊害が起こりがちである．Vim の動作も安定しない．またプラグイン作成を一時中断して，他のタスクを処理するために Vim を使うとなると，開発中のプラグインが作業に干渉したりして不便な状態を強いられることが多い．</p>
+
+<p>ここらへんをどう処理しているか，アマチュア Vim プラグイン開発者にとって凄く気になるところだけれど，意外とノウハウは公開されていない（おそらく有名所だと @thinca さんくらい）．</p>
+
+<ul>
+<li><a href="http://d.hatena.ne.jp/thinca/20100216/1266294717">Vim プラグインの開発スタイルのお話</a></li>
+</ul>
+
+<h1 id="vim-プラグインの開発スタイル:51dc78c8c8dd9f21c609ff2dd8234fa1">Vim プラグインの開発スタイル</h1>
+
+<p>筆者の場合，手探りながらも個人的には満足できるスタイルが確立できたので紹介することにした．</p>
+
+<p>開発スタイルの落とし所としてはこうだ．</p>
+
+<ul>
+<li><code>.vimrc</code> は普段通りのものを使いたい
+
+<ul>
+<li>開発するときに読み込む <code>.vimrc</code> を作るのは面倒だし，それを読み込ませた Vim を起動するのはもっと面倒だ</li>
+<li>それに普段の使い勝手（コマンドやキーバインド）を失いたくない</li>
+</ul></li>
+<li>開発中は余計な操作を強いられずに，<code>.vimrc</code> を制限したい
+
+<ul>
+<li>作成中のプラグインの機能を逐一確かめるために，既存 Vim プラグインは読み込まない</li>
+<li>その制限をシームレスに息を吸うかのごとく設けたい</li>
+</ul></li>
+</ul>
+
+<p>そこで，<code>.vimrc</code> の冒頭に</p>
+
+<pre><code class="language-vim">let s:true  = 1
+let s:false = 0
+
+let s:vimrc_plugin_on = get(g:, 'vimrc_plugin_on', s:true)
+
+if len(findfile(&quot;.development.vim&quot;, &quot;.;&quot;)) &gt; 0
+  let s:vimrc_plugin_on = s:false
+  set runtimepath&amp;
+  execute 'set runtimepath+=' getcwd()
+  for s:plugin in split(glob(getcwd() . &quot;/*&quot;), '\n')
+    execute 'set runtimepath+=' . s:plugin
+  endfor
+endif
+</code></pre>
+
+<p>を記述する．</p>
+
+<p>やっていることは至って単純で，<code>.development.vim</code> が置かれたディレクトリ配下はすべて <code>s:vimrc_plugin_on</code> を <code>false</code> に制限する．もちろんデフォルトは <code>true</code> だ．</p>
+
+<p>そして，<code>.vimrc</code> にあるプラグインの設定を記述している箇所に，</p>
+
+<pre><code class="language-vim"> if has('vim_starting') &amp;&amp; isdirectory($NEOBUNDLEPATH)
++  if s:vimrc_plugin_on == s:true
+     set runtimepath+=$NEOBUNDLEPATH
++  endif
+ endif
+</code></pre>
+
+<p>上記の <code>if</code> 文を加える．これによって読み込むプラグインの置かれたディレクトリを操作している．</p>
+
+<p>たったこれだけで Vim の様相は大きく変わる．<code>g:vimrc_plugin_on</code> が <code>true</code> だと，今までどおりの Vim だけれど，<code>false</code> になると <code>.development.vim</code> が置かれたディレクトリにあるディレクトリしかプラグインと認識されないからだ．</p>
+
+<ul>
+<li><code>g:vimrc_plugin_on == s:true</code></li>
+</ul>
+
+<p><img src="/images/vim_plugin_on/true.png" alt="" />
+</p>
+
+<ul>
+<li><code>g:vimrc_plugin_on == s:false</code></li>
+</ul>
+
+<p><img src="/images/vim_plugin_on/false.png" alt="" />
+</p>
+
+<p>画像のとおり <code>true</code> のときは @thinca さん作の <a href="https://github.com/thinca/vim-splash">vim-splash</a> が読み込まれ，AA が表示されている．一方で，<code>false</code> のとき，つまり <code>.development.vim</code> が存在するとき（プラグイン開発時）にはそれが読み込まれていないことがわかる．</p>
+
+<p>この方法を取ることで，Vim プラグイン開発中は既存のプラグインの読み込みを制限できる．開発はじめに開発ディレクトリに <code>.development.vim</code> を作成するだけでいい．<code>touch</code> コマンドでできる．開発が終われば削除するだけでいい．</p>
+
+<p>もし，既存の Vim プラグインを使用したい場合，正規のプラグインディレクトリから開発ディレクトリまでシンボリックリンクをはればよい．そのプラグインは読み込まれるので，使用することができる．</p>
+
+<p>この開発スタイルは正しいのかは分からない．ただ，こうすることで自分のケースでは何の不便もなく開発に打ち込むことができる．開発を一旦中断する場合，つまり他のディレクトリに移ることで，いつも通りの Vim に戻る．開発中も既存のプラグインさえ使えないものの，他の設定はフルに生きる．</p>
+
+<p>これ以外のおすすめの手法があればぜひ．</p>
+
+    </article>
+    
+ <aside><div id="disqus_thread"></div></aside> 
+
+<script type="text/javascript">
+     
+    var disqus_shortname = 'tellmetokyo';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+  </main>
+
+
+  
+  <footer role="contentinfo">
+    <div class="header-logo" style="text-align:center;">
+      <img src="/images/logo.jpg" width="64" height="64"><br>
+      Written by b4b4r07
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-XXXXXXXX-X', 'auto');
+	ga('send', 'pageview');
+</script>
+
+</body>
+</html>
+
