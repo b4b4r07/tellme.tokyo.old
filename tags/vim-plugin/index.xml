@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vim Plugin on TELLME.TOKYO</title>
+    <link>http://localhost:1313/tags/vim-plugin/</link>
+    <description>Recent content in Vim Plugin on TELLME.TOKYO</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Wed, 17 Jun 2015 23:10:42 +0900</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/vim-plugin/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Vim プラグイン開発の Tips</title>
+      <link>http://localhost:1313/post/2015/06/17/vim_plugin_on/</link>
+      <pubDate>Wed, 17 Jun 2015 23:10:42 +0900</pubDate>
+      
+      <guid>http://localhost:1313/post/2015/06/17/vim_plugin_on/</guid>
+      <description>
+
+&lt;p&gt;プラグイン開発が盛んなエディタの一つに Vim がある．&lt;/p&gt;
+
+&lt;p&gt;筆者も拙劣ながら2つほどリリースした．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/vim-shellutils&#34;&gt;b4b4r07/vim-shellutils&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/vim-autocdls&#34;&gt;b4b4r07/vim-autocdls&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前者はシェルコマンドを Vim script で関数定義してエミュレートしたものだ．Vim に最適化されているため，&lt;code&gt;system()&lt;/code&gt; や &lt;code&gt;!cmd&lt;/code&gt; するよりも便利になっている．後者は，それを応用したもので &lt;code&gt;:cd&lt;/code&gt; するたびに &lt;code&gt;:Ls&lt;/code&gt; するようにしたプラグインだ．&lt;/p&gt;
+
+&lt;p&gt;さて，宣伝はここまでにして，Vim プラグインを作成するとき，普段と同じ環境（つまり同じ &lt;code&gt;.vimrc&lt;/code&gt; を使用し，普段通りのプラグインを読み込んでいる状態）で作っていると何かと弊害が起こりがちである．Vim の動作も安定しない．またプラグイン作成を一時中断して，他のタスクを処理するために Vim を使うとなると，開発中のプラグインが作業に干渉したりして不便な状態を強いられることが多い．&lt;/p&gt;
+
+&lt;p&gt;ここらへんをどう処理しているか，アマチュア Vim プラグイン開発者にとって凄く気になるところだけれど，意外とノウハウは公開されていない（おそらく有名所だと @thinca さんくらい）．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/thinca/20100216/1266294717&#34;&gt;Vim プラグインの開発スタイルのお話&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;vim-プラグインの開発スタイル:51dc78c8c8dd9f21c609ff2dd8234fa1&#34;&gt;Vim プラグインの開発スタイル&lt;/h1&gt;
+
+&lt;p&gt;筆者の場合，手探りながらも個人的には満足できるスタイルが確立できたので紹介することにした．&lt;/p&gt;
+
+&lt;p&gt;開発スタイルの落とし所としてはこうだ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;.vimrc&lt;/code&gt; は普段通りのものを使いたい
+
+&lt;ul&gt;
+&lt;li&gt;開発するときに読み込む &lt;code&gt;.vimrc&lt;/code&gt; を作るのは面倒だし，それを読み込ませた Vim を起動するのはもっと面倒だ&lt;/li&gt;
+&lt;li&gt;それに普段の使い勝手（コマンドやキーバインド）を失いたくない&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;開発中は余計な操作を強いられずに，&lt;code&gt;.vimrc&lt;/code&gt; を制限したい
+
+&lt;ul&gt;
+&lt;li&gt;作成中のプラグインの機能を逐一確かめるために，既存 Vim プラグインは読み込まない&lt;/li&gt;
+&lt;li&gt;その制限をシームレスに息を吸うかのごとく設けたい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そこで，&lt;code&gt;.vimrc&lt;/code&gt; の冒頭に&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;let s:true  = 1
+let s:false = 0
+
+let s:vimrc_plugin_on = get(g:, &#39;vimrc_plugin_on&#39;, s:true)
+
+if len(findfile(&amp;quot;.development.vim&amp;quot;, &amp;quot;.;&amp;quot;)) &amp;gt; 0
+  let s:vimrc_plugin_on = s:false
+  set runtimepath&amp;amp;
+  execute &#39;set runtimepath+=&#39; getcwd()
+  for s:plugin in split(glob(getcwd() . &amp;quot;/*&amp;quot;), &#39;\n&#39;)
+    execute &#39;set runtimepath+=&#39; . s:plugin
+  endfor
+endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を記述する．&lt;/p&gt;
+
+&lt;p&gt;やっていることは至って単純で，&lt;code&gt;.development.vim&lt;/code&gt; が置かれたディレクトリ配下はすべて &lt;code&gt;s:vimrc_plugin_on&lt;/code&gt; を &lt;code&gt;false&lt;/code&gt; に制限する．もちろんデフォルトは &lt;code&gt;true&lt;/code&gt; だ．&lt;/p&gt;
+
+&lt;p&gt;そして，&lt;code&gt;.vimrc&lt;/code&gt; にあるプラグインの設定を記述している箇所に，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt; if has(&#39;vim_starting&#39;) &amp;amp;&amp;amp; isdirectory($NEOBUNDLEPATH)
++  if s:vimrc_plugin_on == s:true
+     set runtimepath+=$NEOBUNDLEPATH
++  endif
+ endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上記の &lt;code&gt;if&lt;/code&gt; 文を加える．これによって読み込むプラグインの置かれたディレクトリを操作している．&lt;/p&gt;
+
+&lt;p&gt;たったこれだけで Vim の様相は大きく変わる．&lt;code&gt;g:vimrc_plugin_on&lt;/code&gt; が &lt;code&gt;true&lt;/code&gt; だと，今までどおりの Vim だけれど，&lt;code&gt;false&lt;/code&gt; になると &lt;code&gt;.development.vim&lt;/code&gt; が置かれたディレクトリにあるディレクトリしかプラグインと認識されないからだ．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:true&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/vim_plugin_on/true.png&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:false&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/vim_plugin_on/false.png&#34; alt=&#34;&#34; /&gt;
+&lt;/p&gt;
+
+&lt;p&gt;画像のとおり &lt;code&gt;true&lt;/code&gt; のときは @thinca さん作の &lt;a href=&#34;https://github.com/thinca/vim-splash&#34;&gt;vim-splash&lt;/a&gt; が読み込まれ，AA が表示されている．一方で，&lt;code&gt;false&lt;/code&gt; のとき，つまり &lt;code&gt;.development.vim&lt;/code&gt; が存在するとき（プラグイン開発時）にはそれが読み込まれていないことがわかる．&lt;/p&gt;
+
+&lt;p&gt;この方法を取ることで，Vim プラグイン開発中は既存のプラグインの読み込みを制限できる．開発はじめに開発ディレクトリに &lt;code&gt;.development.vim&lt;/code&gt; を作成するだけでいい．&lt;code&gt;touch&lt;/code&gt; コマンドでできる．開発が終われば削除するだけでいい．&lt;/p&gt;
+
+&lt;p&gt;もし，既存の Vim プラグインを使用したい場合，正規のプラグインディレクトリから開発ディレクトリまでシンボリックリンクをはればよい．そのプラグインは読み込まれるので，使用することができる．&lt;/p&gt;
+
+&lt;p&gt;この開発スタイルは正しいのかは分からない．ただ，こうすることで自分のケースでは何の不便もなく開発に打ち込むことができる．開発を一旦中断する場合，つまり他のディレクトリに移ることで，いつも通りの Vim に戻る．開発中も既存のプラグインさえ使えないものの，他の設定はフルに生きる．&lt;/p&gt;
+
+&lt;p&gt;これ以外のおすすめの手法があればぜひ．&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
