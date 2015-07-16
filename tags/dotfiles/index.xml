@@ -213,9 +213,12 @@ fi
 
 &lt;p&gt;おおまかに優れた dotfiles の設計について説いた．次は筆者のリポジトリを例に見ていこうと思う．&lt;/p&gt;
 
-&lt;blockquote&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;b4b4r07/dotfiles ❤ GitHub&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;b4b4r07/dotfiles ❤ GitHub&lt;/a&gt; &lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34; title=&#34;b4b4r07/dotfiles&#34;&gt;&lt;img src=&#34;https://img.shields.io/github/stars/b4b4r07/dotfiles.svg?style=flat-square&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
+&lt;blockquote&gt;
 &lt;p&gt;Testing my dotfiles repo on OS X to get my work environment ready in just a few moments. #VIM + #ZSH + #TMUX = Best Developer Environment &lt;a href=&#34;http://b4b4r07.com/dotfiles&#34;&gt;http://b4b4r07.com/dotfiles&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
