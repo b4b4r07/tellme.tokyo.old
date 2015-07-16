@@ -6,8 +6,435 @@
     <description>Recent content on TELLME.TOKYO</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Tue, 23 Jun 2015 15:47:51 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 16 Jul 2015 19:02:20 +0900</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>優れた dotfiles を設計する</title>
+      <link>http://localhost:1313/post/2015/07/16/dotfiles/</link>
+      <pubDate>Thu, 16 Jul 2015 19:02:20 +0900</pubDate>
+      
+      <guid>http://localhost:1313/post/2015/07/16/dotfiles/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/title.png&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;OS のクリーンインストールは面倒くさい． アプリケーションをいちいちダウンロードしてきて，普段の勝手と同じになるように設定する必要がある．CLI においても同じで，設定ファイルをいちいち書いたり，普段どんなプラグインを使っていたかを思い出してダウンロードするのは面倒だ．
+よくあるのは &lt;code&gt;.vimrc&lt;/code&gt; などの設定ファイルを Dropbox や GitHub に置いておいて，環境を作り直したときにコピーする手法だ．
+dotfiles はその手法の延長線上にあって，より便利に高速化・自動化した方法だ．&lt;/p&gt;
+
+&lt;p&gt;dotfiles とは UNIX 系の OS でいう設定ファイルのことで，ファイル名がドット &lt;code&gt;.&lt;/code&gt; から始まることからそう呼ばれている．&lt;/p&gt;
+
+&lt;h1 id=&#34;tl-dr:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;TL;DR&lt;/h1&gt;
+
+&lt;p&gt;HTTP 経由でインストールできる dotfiles をつくって 1 分で環境構築を終わらせる．&lt;/p&gt;
+
+&lt;h1 id=&#34;getting-started:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;Getting Started&lt;/h1&gt;
+
+&lt;p align=&#34;center&#34;&gt;
+  &lt;a href=&#34;http://b4b4r07.com/dotfiles&#34;&gt;
+  &lt;img width=&#34;35%&#34; src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/symbol.png&#34;&gt;
+  &lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;dotfiles を始めるのはとても簡単だ．GitHub アカウントがあるなら，「dotfiles」の名前でリポジトリを作って自分のドットファイルを転送するだけ．別に dotfiles という名前である必要はないが，GitHub をウォッチすればこの名前でホスティングしているケースが圧倒的に多い（極稀に config や rcfiles といった名前も見かける）．&lt;/p&gt;
+
+&lt;p&gt;dotfiles というのは GitHub にアップロードしただけじゃうまく使えない．ホームディレクトリにコピーする必要があるのだが，環境を変えるごとに&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ cp dotfiles/.vimrc ~/.vimrc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とするのはとても面倒で，しかもドットファイルがたくさんあるなら尚更．まずはこれを自動化しよう．&lt;/p&gt;
+
+&lt;p&gt;簡単なシェルスクリプトを書くだけでいい．Ruby（Rakefile）や Lua など他のスクリプト言語で書いている人も見かけるが，基本的に環境を構築するときは何もインストールされていない状態なので，これらの高級言語や枯れていない技術などは使えない可能性がある．シェルスクリプトや make はこういった心配がないので重宝する．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#...
+
+for f in .??*
+do
+    [ &amp;quot;$f&amp;quot; = &amp;quot;.git&amp;quot; ] &amp;amp;&amp;amp; continue
+
+    ln -snfv &amp;quot;$f&amp;quot; &amp;quot;$HOME&amp;quot;/&amp;quot;$f&amp;quot;
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これがコピー・リンク用のスクリプトで，いわゆるインストールスクリプト（ &lt;em&gt;installation script&lt;/em&gt; ）である．ドットファイルを列挙（&lt;code&gt;.??*&lt;/code&gt;）して &lt;code&gt;ln&lt;/code&gt; を実行している．コピーではなくシンボリックリンクなのは，変更の同期を楽にするためである．設定を変更したり改修したりしたときに，よしなに dotfiles へ同期されるので，あとは &lt;code&gt;git push&lt;/code&gt; をするだけという環境までもっていける．&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;.git&lt;/code&gt; や &lt;code&gt;.DS_Store&lt;/code&gt; などの不要なドットファイルは実行されないようにすればよい．&lt;/p&gt;
+
+&lt;h1 id=&#34;http-経由でインストールする:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;HTTP 経由でインストールする&lt;/h1&gt;
+
+&lt;p align=&#34;center&#34;&gt;
+  &lt;a href=&#34;http://b4b4r07.com/dotfiles&#34;&gt;
+  &lt;img width=&#34;35%&#34; src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/http.png&#34;&gt;
+  &lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;前項で dotfiles の基本は完成した．あとは環境が壊れたり新しくなったときに，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ git clone htttp://github.com/&amp;quot;${username}&amp;quot;/dotfile.git
+$ cd dotfiles
+$ ./install.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を実行するだけである．しかし，これでは少し問題が残っている．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;コマンドを 3 つ打たなければならない&lt;/li&gt;
+&lt;li&gt;git がない場合&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;特に後者は面倒で，git がないと git のインストールからスタートになる．一般ユーザなどで git をインストールできないなどの場合は更に厄介で，GitHub にアップされている dotfiles の tarball や zipball の URL を取得して，&lt;code&gt;curl&lt;/code&gt; や &lt;code&gt;wget&lt;/code&gt; を使う必要がある．&lt;/p&gt;
+
+&lt;p&gt;ここらへんの障害を吸収したスクリプトがこれ．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#...
+
+DOTPATH=~/.dotfiles
+
+# git が使えるなら git
+if has &amp;quot;git&amp;quot;; then
+    git clone --recursive &amp;quot;$GITHUB_URL&amp;quot; &amp;quot;$DOTPATH&amp;quot;
+
+# 使えない場合は curl か wget を使用する
+elif has &amp;quot;curl&amp;quot; || has &amp;quot;wget&amp;quot;; then
+    tarball=&amp;quot;https://github.com/b4b4r07/dotfiles/archive/master.tar.gz&amp;quot;
+    
+    # どっちかでダウンロードして，tar に流す
+    if has &amp;quot;curl&amp;quot;; then
+        curl -L &amp;quot;$tarball&amp;quot;
+
+    elif has &amp;quot;wget&amp;quot;; then
+        wget -O - &amp;quot;$tarball&amp;quot;
+
+    fi | tar xv -
+    
+    # 解凍したら，DOTPATH に置く
+    mv -f dotfiles-master &amp;quot;$DOTPATH&amp;quot;
+
+else
+    die &amp;quot;curl or wget required&amp;quot;
+fi
+
+cd ~/.dotfiles
+if [ $? -ne 0 ]; then
+    die &amp;quot;not found: $DOTPATH&amp;quot;
+fi
+
+# 移動できたらリンクを実行する
+for f in .??*
+do
+    [ &amp;quot;$f&amp;quot; = &amp;quot;.git&amp;quot; ] &amp;amp;&amp;amp; continue
+
+    ln -snfv &amp;quot;$DOTPATH/$f&amp;quot; &amp;quot;$HOME/$f&amp;quot;
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;長いようにみえるが，律儀に条件分岐して実行するだけなので意外と簡単だ．あとはこれを &lt;code&gt;install.sh&lt;/code&gt; といった分かりやすいファイル名にしてアップロードする．&lt;/p&gt;
+
+&lt;p&gt;さて，&lt;code&gt;curl&lt;/code&gt; でこれにアクセスするが，そのままだと HTML の構造ごと見えてしまうので github.com のサブドメインに raw を付けて実行する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ curl -L raw.github.com/&amp;quot;${username}&amp;quot;/dotfiles/&amp;quot;${branch:-master}&amp;quot;/install.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;リダイレクトが発生するので &lt;code&gt;-L&lt;/code&gt; オプションはマストになる．こうすると，先ほどの &lt;code&gt;install.sh&lt;/code&gt; が表示されると思う．あとはこれをシェルに渡すだけだ．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ curl -L raw.github.com/&amp;quot;${username}&amp;quot;/dotfiles/master/install.sh | bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでシェル環境の構築が完了したのではなかろうか．ワンコマンドで済み，依存するツールを最小限にすることができた．raw 付きの URL も覚えられなくはない長さなので，すぐさまこれをタイプするだけで OK だ．&lt;/p&gt;
+
+&lt;p&gt;しかし，リンクが切れたとかで，再度 &lt;code&gt;install.sh&lt;/code&gt; を実行するときや，HTTP 経由ではなくローカルから実行するには少し工夫が必要になる．このままだと，dotfiles のインストールから再開されてしまうからだ．&lt;/p&gt;
+
+&lt;h1 id=&#34;deploy-と-initialize:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;deploy と initialize&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;deploy&lt;/em&gt; と &lt;em&gt;initialize&lt;/em&gt; については，下の記事で解説したがもう一度おさらいしようと思う．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://qiita.com/b4b4r07/items/b70178e021bef12cd4a2&#34;&gt;最強の dotfiles 駆動開発と GitHub で管理する運用方法&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;deploy&lt;/em&gt;&lt;/strong&gt; &lt;strong&gt;とは&lt;/strong&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;deploy&lt;/em&gt; とは，dotfiles にあるドットファイルをホームディレクトリに展開することを指す．便宜的にそう読んでいるだけで，その実態はコピーであったりシンボリックリンクを張ることをいっている．&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;initialize&lt;/em&gt;&lt;/strong&gt; &lt;strong&gt;とは&lt;/strong&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;initialize&lt;/em&gt; とは，環境を再現するのに必要なソフトウェアをインストールしたり，プラグインのダウンロード・セットアップやディレクトリ名を英語化したりなどの最後の仕上げ部分を指す．アップデートを除いて一回きりの設定なので便宜上こう呼ぶ&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;これらを一緒くたにしてしまっているインストールスクリプト（ &lt;em&gt;installation script&lt;/em&gt; ）は設計上よろしくない．何故かと言うと，その説明にもある通り，&lt;em&gt;initialize&lt;/em&gt; はセットアップ時の一回きりしか実行されないからだ．一方で &lt;em&gt;deploy&lt;/em&gt; は何度も実行する場面がある．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;リンクが切れた時&lt;/li&gt;
+&lt;li&gt;リンクされたファイルを削除した時&lt;/li&gt;
+&lt;li&gt;新しいファイルを dotfiles に追加した時&lt;/li&gt;
+&lt;li&gt;など&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このときに，&lt;em&gt;initialize&lt;/em&gt; を動き出すとはっきりいって面倒で，Ctrl-C で中断したりリンク張るためにスクリプトからリンクを実行している部分を切り出して別ファイルで実行したりしなければならない．&lt;/p&gt;
+
+&lt;h2 id=&#34;設定例:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;設定例&lt;/h2&gt;
+
+&lt;p&gt;例えば処理部分で切り分けて，オプションやサブコマンドで対応したりする．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+
+deploy() {
+	#...
+	echo &amp;quot;deploy&amp;quot;
+}
+
+initalize() {
+	#...
+	echo &amp;quot;init&amp;quot;
+}
+
+if [ &amp;quot;$1&amp;quot; = &amp;quot;deploy&amp;quot; -o &amp;quot;$1&amp;quot; = &amp;quot;d&amp;quot; ]; then
+	deploy
+elif [ &amp;quot;$1&amp;quot; = &amp;quot;init&amp;quot; -o &amp;quot;$1&amp;quot; = &amp;quot;i&amp;quot; ; then
+	initalize
+fi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;オプションにすると &lt;code&gt;curl&lt;/code&gt; でインストールするときに少しわかりづらい記述になってしまう．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ curl -L dot.example.com | bash -s -d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;b4b4r07-dotfiles:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;b4b4r07/dotfiles&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/logo.png&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;おおまかに優れた dotfiles の設計について説いた．次は筆者のリポジトリを例に見ていこうと思う．&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;b4b4r07/dotfiles ❤ GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Testing my dotfiles repo on OS X to get my work environment ready in just a few moments. #VIM + #ZSH + #TMUX = Best Developer Environment &lt;a href=&#34;http://b4b4r07.com/dotfiles&#34;&gt;http://b4b4r07.com/dotfiles&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;筆者の場合，インストールスクリプト（ &lt;em&gt;installation script&lt;/em&gt; ）の他に，後述するが make を使っている．make を使うのは環境依存性の排除を重視しているからだ．dotfiles のセットアップ時は，環境が整っていない状態なのでなるべくツールの依存性を少なくしなければならない．make であれば、だいたいの Unix ライクシステムで利用できる．環境依存性を少なくするベストプラクティスは Bourne Shell，make を使うことだ．&lt;/p&gt;
+
+&lt;h2 id=&#34;インストール:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;インストール&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;curl&lt;/code&gt; でインストールを開始する．&lt;code&gt;wget&lt;/code&gt; でも良い．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ bash -c &amp;quot;$(curl -L dot.b4b4r07.com)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上の方法でなく，&lt;code&gt;curl -L dot.b4b4r07.com | sh&lt;/code&gt; でもいいが，これだとサブシェル上でインストールが開始される．この dotfiles のインストールスクリプト（ &lt;em&gt;installation script&lt;/em&gt; ）はシェルの再起動も自動化しているため，それを有効化するためにはカレントシェルで実行する必要がある．&lt;/p&gt;
+
+&lt;p&gt;このワンライナーにより，&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;dotfiles をダウンロードする．&lt;code&gt;git clone&lt;/code&gt; で引っ張ってくるが，git がない場合は &lt;code&gt;curl&lt;/code&gt; または &lt;code&gt;wget&lt;/code&gt; を使う&lt;/li&gt;
+&lt;li&gt;次に &lt;code&gt;make deploy&lt;/code&gt; を実行する（やっていることは，各ドットファイルをホームディレクトリにリンクする）&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;ドットファイルは，ダウンロードしたディレクトリを起点に make によってリンクされる．また，そのディレクトリをそれ以後，そのユーザの dotfiles リポジトリとして扱う．そのパスは &lt;code&gt;$DOTPATH&lt;/code&gt; で管理しているので，変更したい場合は，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ DOTPATH=/path/to/dotfiles curl -L ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;として実行する（ただし事前に export されている必要がある）．デフォルトの &lt;code&gt;$DOTPATH&lt;/code&gt; は &lt;code&gt;~/.dotfiles&lt;/code&gt;．&lt;/p&gt;
+
+&lt;p&gt;引数に &lt;code&gt;init&lt;/code&gt; を渡すと，&lt;code&gt;make init&lt;/code&gt; も実行する．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ bash -c &amp;quot;$(curl -L dot.b4b4r07.com)&amp;quot; -s init
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;アップデートも簡単で，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ make update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすると，すぐさま最新版にしてくれる．make を使ったことで処理の切り分けが簡単になった．&lt;/p&gt;
+
+&lt;h2 id=&#34;ロジック:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;ロジック&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components_ja.png&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/components_ja.png&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;curl&lt;/code&gt; が参照するのは GitHub にホストされた &lt;code&gt;etc/install&lt;/code&gt; の raw ファイル&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;etc/install&lt;/code&gt; はインストールスクリプト（ &lt;em&gt;installation script&lt;/em&gt; ）であると同時に，それ自体がライブラリになっており、呼び出し方によってライブラリかインストールスクリプト（*installation script*）かを決めている&lt;/li&gt;
+&lt;li&gt;dotfiles に同梱されている多くのコマンドやスクリプトは，このライブラリを参照している&lt;/li&gt;
+&lt;li&gt;そのパス解決に &lt;code&gt;$DOTPATH&lt;/code&gt; を使用する&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$DOTPATH&lt;/code&gt; はホームディレクトリにリンクされたドットファイル &lt;code&gt;.path&lt;/code&gt; によって決定する&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;dotpath:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;DOTPATH&lt;/h2&gt;
+
+&lt;p&gt;dotfiles に関してたった一つだけ，専用の環境変数 DOTPATH を設けている．それは dotfiles ディレクトリのパスを知る変数で，後述する vital ライブラリや init スクリプトのパス解決に使われる．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+
+. &amp;quot;$DOTPATH&amp;quot;/etc/lib/vital.sh
+
+#...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;.path&lt;/code&gt; というドットファイルをホームディレクトリにリンクすることで，dotfiles のパスを辿っている．コマンド化させた &lt;code&gt;dotpath&lt;/code&gt; を用意しているので，実行するだけで簡単に取得できる．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ dotpath
+/home/b4b4r07/.dotfiles
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;make:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;make&lt;/h2&gt;
+
+&lt;p&gt;この dotfiles では，make がすべての起点になる．&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;make deploy&lt;/code&gt;: ドットファイルをリンクする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make init&lt;/code&gt;: 環境構築をする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make list&lt;/code&gt;: リンクされるドットファイルをリストする&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make test&lt;/code&gt;: dotfiles を検証する&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;make clean&lt;/code&gt;: dotfiles とドットファイルを削除する&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ユーザはそれ以外のディレクトリを覗く必要もないし，それ以外のファイルを実行する必要もない．&lt;/p&gt;
+
+&lt;h3 id=&#34;deploy:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;deploy&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;deploy&lt;/em&gt; とは，ドットファイルをホームディレクトリにリンクすることをいう．&lt;code&gt;.bashrc&lt;/code&gt; や &lt;code&gt;.vimrc&lt;/code&gt; などのドットファイル（ファイル名の頭に &lt;code&gt;.&lt;/code&gt; が付く）はホームディレクトリにあると各種アプリケーションが読み込むような慣習があるためだ．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-make&#34;&gt;DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+CANDIDATES := $(wildcard .??*) bin
+EXCLUDE    := .DS_Store .git .gitmodules .travis.yml
+DOTFILES   := $(filter-out $(EXCLUDE), $(CANDIDATES))
+
+deploy:
+	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;init:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;init&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;initialize&lt;/em&gt; とは，各種アプリケーションの設定ファイル&lt;strong&gt;以外&lt;/strong&gt;の環境設定やその他をいう．例えば，Vim では &lt;code&gt;.vimrc&lt;/code&gt; で行う設定以外にプラグインのダウンロードという作業が必要である．また，普段使うソフトウェアのインストールやローカライズなど，環境構築で欠かせないプロセスをプログラム化したのがこのステップである．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-make&#34;&gt;init:
+	@DOTPATH=$(DOTPATH) bash $(DOTPATH)/etc/init/init.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;make init&lt;/code&gt; は &lt;code&gt;$DOTPATH/etc/init/init.sh&lt;/code&gt; を実行するだけである．では，そのシェルスクリプトは何をしているのかというと，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#...
+
+for i in &amp;quot;$DOTPATH&amp;quot;/etc/init/&amp;quot;$(get_os)&amp;quot;/*[^init].sh
+do
+    if [ -f &amp;quot;$i&amp;quot; ]; then
+        e_arrow &amp;quot;$(basename &amp;quot;$i&amp;quot;)&amp;quot;; bash &amp;quot;$i&amp;quot;
+    else
+        continue
+    fi
+done
+
+#...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行しているプラットフォームで必要なプロセスを記述したシェルスクリプトを呼び出している．こうすることで一括した実行が可能になる．また，&lt;em&gt;deploy&lt;/em&gt; のときのように make で書けなくないが，テスタブルにする必要があるためシェルスクリプトに書き，それを make で呼ぶ形式になっている．&lt;/p&gt;
+
+&lt;h3 id=&#34;test:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;test&lt;/h3&gt;
+
+&lt;p&gt;dotfiles が正しくインストールできるか，付随するシェルスクリプトが正しく動作するかなどをチェックする．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ make test
+ ✔ deploying dot files...OK
+ ✔ linking valid paths...OK
+ ✖ /Users/b4b4r07/.dotfiles/etc/test/redirect_test.sh: 17: unit1
+ ➜ check shellcheck...
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/init.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/common/pygments.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/osx/brew.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/osx/bundle.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/osx/go.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/osx/pygments.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/osx/unlocalize.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/linux/chsh.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/linux/goal.sh...OK
+     ✔ /Users/b4b4r07/.dotfiles/etc/init/linux/pygments.sh...OK
+ ➜ test brew.sh...
+     ✔ check if init script exists...OK
+     ✔ check running...OK
+ ➜ test bundle.sh...
+     ✔ check if init script exists...OK
+     ✔ check if Brewfile exists...OK
+Files=5, Tests=6
+make: *** [test] Error 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ローカルでは &lt;code&gt;make test&lt;/code&gt; とすると，テストが走る．見かけないエラーが出てきたら &lt;code&gt;--silent&lt;/code&gt; オプションを付けて実行する．ディレクトリの切り方は init のそれとほぼ同じで，Makefile からも，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-make&#34;&gt;test:
+	@DOTPATH=$(DOTPATH) bash $(DOTPATH)/etc/test/test.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;としているだけである．init 以外のテストスクリプトは &lt;code&gt;test/&lt;/code&gt; 直下に置く．例えば，raw ページのリダイレクトなどがある．&lt;/p&gt;
+
+&lt;p&gt;CI as a Service は Travis CI でテストしている．&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;language: c
+os:
+    - linux
+    - osx
+
+env:
+  global:
+    - DOTPATH=~/.dotfiles
+    - GOPATH=~
+
+install:
+    - curl -L dot.b4b4r07.com | bash
+    - cd $DOTPATH
+    - make init
+
+script:
+    - make --silent test
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;bash -c ...&lt;/code&gt; としていないのはシェルの再起動を防ぐためである．Travis CI でシェルを切り替えてしまうとテストするタスクも消え去るからである．&lt;/p&gt;
+
+&lt;h2 id=&#34;vital-sh:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;vital.sh&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;vital.sh&lt;/code&gt; は最も重要なファイルの一つで，&lt;code&gt;../install&lt;/code&gt; を参照するシンボリックリンクのライブラリファイルである．&lt;/p&gt;
+
+&lt;p&gt;挙動が面白いスクリプトで，コールのされかたによって &lt;code&gt;vital.sh&lt;/code&gt; として動作したり &lt;code&gt;install&lt;/code&gt; だったりする．&lt;code&gt;lib/install&lt;/code&gt; として振る舞うのは &lt;code&gt;bash -c ...&lt;/code&gt; か &lt;code&gt;| bash&lt;/code&gt; で呼ばれたときのみ．つまり，&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;bash -c &amp;quot;$(curl dot.b4b4r07.com)&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;curl -L dot.b4b4r07.com | bash&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;のときである．&lt;code&gt;source&lt;/code&gt; で取り込まれたときは &lt;code&gt;vital.sh&lt;/code&gt; として振る舞い，それ以外（&lt;code&gt;bash vital.sh&lt;/code&gt; など）では実行されない．HTTP を通してインストールする場合，前者 2 種のどちらかであるし，ライブラリとして読み込む場合は，&lt;code&gt;source&lt;/code&gt; や &lt;code&gt;.&lt;/code&gt; コマンドが必要で，コマンドラインから実行するようなユースケースは想定されないからだ．&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;vital.sh&lt;/code&gt; にはたくさんのユーティリティがあって，プラットフォームを検知する関数や &lt;code&gt;$PLATFORM&lt;/code&gt; という環境変数，&lt;code&gt;has&lt;/code&gt;，&lt;code&gt;die&lt;/code&gt; など．&lt;/p&gt;
+
+&lt;h1 id=&#34;まとめ:f6c8ac5bb47a72f181aa6c9def901a4c&#34;&gt;まとめ&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-console&#34;&gt;$ bash -c &amp;quot;$(curl -L dot.b4b4r07.com)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上で解説したテクニックや設計を集合させると，下の Gif アニメーションのようにあっさりと環境構築が可能になる．たったワンコマンドで数分，数秒で完了する．&lt;em&gt;initialize&lt;/em&gt; までやりたいなら &lt;code&gt;-s init&lt;/code&gt; をつけるだけ．&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/demo.gif&#34; alt=&#34;&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;これらの設計，つまり&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;インストールスクリプト（ &lt;em&gt;installation script&lt;/em&gt; ）を用意する&lt;/li&gt;
+&lt;li&gt;HTTP 経由で利用できるように工夫する&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;deploy&lt;/em&gt; と &lt;em&gt;initialize&lt;/em&gt; は分ける&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;をベースに dotfiles をつくっていくと簡単に環境の再現ができるようになる．たかがターミナルの設定とはいえ，環境の再構築は簡単にできるに越したことはないと思う．ワンコマンドですぐに再構築できるのは環境が壊れることを恐れさせない強みになるからだ．&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>開発者から見た UNIX 哲学とコマンドラインツールと Go言語</title>
