@@ -307,10 +307,10 @@ fi
 
 &lt;p&gt;&lt;em&gt;deploy&lt;/em&gt; とは，ドットファイルをホームディレクトリにリンクすることをいう．&lt;code&gt;.bashrc&lt;/code&gt; や &lt;code&gt;.vimrc&lt;/code&gt; などのドットファイル（ファイル名の頭に &lt;code&gt;.&lt;/code&gt; が付く）はホームディレクトリにあると各種アプリケーションが読み込むような慣習があるためだ．&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-make&#34;&gt;DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+&lt;pre&gt;&lt;code class=&#34;language-make&#34;&gt;EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml
 CANDIDATES := $(wildcard .??*) bin
-EXCLUDE    := .DS_Store .git .gitmodules .travis.yml
-DOTFILES   := $(filter-out $(EXCLUDE), $(CANDIDATES))
+DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
+DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 deploy:
 	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
@@ -406,10 +406,10 @@ script:
 
 &lt;p&gt;&lt;code&gt;vital.sh&lt;/code&gt; は最も重要なファイルの一つで，&lt;code&gt;../install&lt;/code&gt; を参照するシンボリックリンクのライブラリファイルである．&lt;/p&gt;
 
-&lt;p&gt;挙動が面白いスクリプトで，コールのされかたによって &lt;code&gt;vital.sh&lt;/code&gt; として動作したり &lt;code&gt;install&lt;/code&gt; だったりする．&lt;code&gt;lib/install&lt;/code&gt; として振る舞うのは &lt;code&gt;bash -c ...&lt;/code&gt; か &lt;code&gt;| bash&lt;/code&gt; で呼ばれたときのみ．つまり，&lt;/p&gt;
+&lt;p&gt;挙動が面白いスクリプトで，コールのされかたによって &lt;code&gt;vital.sh&lt;/code&gt; として動作したり &lt;code&gt;install&lt;/code&gt; だったりする．&lt;code&gt;lib/install&lt;/code&gt; として振る舞うのは &lt;code&gt;bash -c ...&lt;/code&gt; か &lt;code&gt;... | bash&lt;/code&gt; で呼ばれたときのみ．つまり，&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;bash -c &amp;quot;$(curl dot.b4b4r07.com)&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bash -c &amp;quot;$(curl -L dot.b4b4r07.com)&amp;quot;&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;curl -L dot.b4b4r07.com | bash&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 

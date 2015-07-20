@@ -349,10 +349,10 @@ fi
 
 <p><em>deploy</em> とは，ドットファイルをホームディレクトリにリンクすることをいう．<code>.bashrc</code> や <code>.vimrc</code> などのドットファイル（ファイル名の頭に <code>.</code> が付く）はホームディレクトリにあると各種アプリケーションが読み込むような慣習があるためだ．</p>
 
-<pre><code class="language-make">DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+<pre><code class="language-make">EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml
 CANDIDATES := $(wildcard .??*) bin
-EXCLUDE    := .DS_Store .git .gitmodules .travis.yml
-DOTFILES   := $(filter-out $(EXCLUDE), $(CANDIDATES))
+DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
+DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 deploy:
 	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
@@ -448,10 +448,10 @@ script:
 
 <p><code>vital.sh</code> は最も重要なファイルの一つで，<code>../install</code> を参照するシンボリックリンクのライブラリファイルである．</p>
 
-<p>挙動が面白いスクリプトで，コールのされかたによって <code>vital.sh</code> として動作したり <code>install</code> だったりする．<code>lib/install</code> として振る舞うのは <code>bash -c ...</code> か <code>| bash</code> で呼ばれたときのみ．つまり，</p>
+<p>挙動が面白いスクリプトで，コールのされかたによって <code>vital.sh</code> として動作したり <code>install</code> だったりする．<code>lib/install</code> として振る舞うのは <code>bash -c ...</code> か <code>... | bash</code> で呼ばれたときのみ．つまり，</p>
 
 <ul>
-<li><code>bash -c &quot;$(curl dot.b4b4r07.com)&quot;</code></li>
+<li><code>bash -c &quot;$(curl -L dot.b4b4r07.com)&quot;</code></li>
 <li><code>curl -L dot.b4b4r07.com | bash</code></li>
 </ul>
 
