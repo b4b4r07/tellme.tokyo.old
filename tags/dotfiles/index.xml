@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dotfiles on TELLME.TOKYO</title>
-    <link>http://localhost:1313/tags/dotfiles/</link>
+    <link>http://tellme.tokyo/tags/dotfiles/</link>
     <description>Recent content in Dotfiles on TELLME.TOKYO</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Thu, 16 Jul 2015 19:02:20 +0900</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/dotfiles/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://tellme.tokyo/tags/dotfiles/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>優れた dotfiles を設計する</title>
-      <link>http://localhost:1313/post/2015/07/16/dotfiles/</link>
+      <link>http://tellme.tokyo/post/2015/07/16/dotfiles/</link>
       <pubDate>Thu, 16 Jul 2015 19:02:20 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/07/16/dotfiles/</guid>
+      <guid>http://tellme.tokyo/post/2015/07/16/dotfiles/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/title.png&#34; alt=&#34;&#34; /&gt;

@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Golang on TELLME.TOKYO</title>
-    <link>http://localhost:1313/tags/golang/</link>
+    <link>http://tellme.tokyo/tags/golang/</link>
     <description>Recent content in Golang on TELLME.TOKYO</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Tue, 23 Jun 2015 15:47:51 +0900</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://tellme.tokyo/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>開発者から見た UNIX 哲学とコマンドラインツールと Go言語</title>
-      <link>http://localhost:1313/post/2015/06/23/unix_cli_tool_go/</link>
+      <link>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</link>
       <pubDate>Tue, 23 Jun 2015 15:47:51 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/06/23/unix_cli_tool_go/</guid>
+      <guid>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</guid>
       <description>
 
 &lt;p&gt;CLI（Command-line Interface）ツールが好きで自分でもよく作るし，よく使っている．最近は高速で，かつクロスコンパイルが容易な Go 言語がその開発に使われることが多いようだ．実際に筆者も拙劣ながら Go 言語で何個かリリースしている．&lt;/p&gt;
@@ -243,10 +243,10 @@ func main() {
     
     <item>
       <title>Golang でコマンドラインにゴミ箱を実装した話</title>
-      <link>http://localhost:1313/post/2015/05/22/gomi/</link>
+      <link>http://tellme.tokyo/post/2015/05/22/gomi/</link>
       <pubDate>Fri, 22 May 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/05/22/gomi/</guid>
+      <guid>http://tellme.tokyo/post/2015/05/22/gomi/</guid>
       <description>
 
 &lt;h1 id=&#34;まえがき:562e4d040771234bd98b731edec0bf65&#34;&gt;まえがき&lt;/h1&gt;
@@ -357,7 +357,7 @@ foo
 
 &lt;h1 id=&#34;gomi:562e4d040771234bd98b731edec0bf65&#34;&gt;gomi&lt;/h1&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/gomi/master/images/gomi_logo.png&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/gomi/logo.png&#34; alt=&#34;&#34; /&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;ul&gt;
@@ -389,7 +389,7 @@ foo
 
 &lt;p&gt;これだけでもかなり便利です．下の GIF を参照されたい．&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/gomi/master/images/gomi.gif&#34; alt=&#34;b4b4r07/gomi&#34; /&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/gomi/demo.gif&#34; alt=&#34;b4b4r07/gomi&#34; /&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;めっちゃ便利．&lt;/p&gt;

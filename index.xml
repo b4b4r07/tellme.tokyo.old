@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>TELLME.TOKYO</title>
-    <link>http://localhost:1313/</link>
+    <link>http://tellme.tokyo/</link>
     <description>Recent content on TELLME.TOKYO</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Thu, 16 Jul 2015 19:02:20 +0900</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://tellme.tokyo/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>優れた dotfiles を設計する</title>
-      <link>http://localhost:1313/post/2015/07/16/dotfiles/</link>
+      <link>http://tellme.tokyo/post/2015/07/16/dotfiles/</link>
       <pubDate>Thu, 16 Jul 2015 19:02:20 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/07/16/dotfiles/</guid>
+      <guid>http://tellme.tokyo/post/2015/07/16/dotfiles/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/dotfiles&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/dotfiles/title.png&#34; alt=&#34;&#34; /&gt;
@@ -441,10 +441,10 @@ script:
     
     <item>
       <title>開発者から見た UNIX 哲学とコマンドラインツールと Go言語</title>
-      <link>http://localhost:1313/post/2015/06/23/unix_cli_tool_go/</link>
+      <link>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</link>
       <pubDate>Tue, 23 Jun 2015 15:47:51 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/06/23/unix_cli_tool_go/</guid>
+      <guid>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</guid>
       <description>
 
 &lt;p&gt;CLI（Command-line Interface）ツールが好きで自分でもよく作るし，よく使っている．最近は高速で，かつクロスコンパイルが容易な Go 言語がその開発に使われることが多いようだ．実際に筆者も拙劣ながら Go 言語で何個かリリースしている．&lt;/p&gt;
@@ -673,10 +673,10 @@ func main() {
     
     <item>
       <title>Vim プラグイン開発の Tips</title>
-      <link>http://localhost:1313/post/2015/06/17/vim_plugin_on/</link>
+      <link>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</link>
       <pubDate>Wed, 17 Jun 2015 23:10:42 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/06/17/vim_plugin_on/</guid>
+      <guid>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</guid>
       <description>
 
 &lt;p&gt;プラグイン開発が盛んなエディタの一つに Vim がある．&lt;/p&gt;
@@ -757,14 +757,14 @@ endif
 &lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:true&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/vim_plugin_on/true.png&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/vim_plugin_on/true.png&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:false&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/vim_plugin_on/false.png&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/vim_plugin_on/false.png&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;画像のとおり &lt;code&gt;true&lt;/code&gt; のときは @thinca さん作の &lt;a href=&#34;https://github.com/thinca/vim-splash&#34;&gt;vim-splash&lt;/a&gt; が読み込まれ，AA が表示されている．一方で，&lt;code&gt;false&lt;/code&gt; のとき，つまり &lt;code&gt;.development.vim&lt;/code&gt; が存在するとき（プラグイン開発時）にはそれが読み込まれていないことがわかる．&lt;/p&gt;
@@ -781,25 +781,25 @@ endif
     
     <item>
       <title>MacBook 12 inch を買った</title>
-      <link>http://localhost:1313/post/2015/06/03/macbook/</link>
+      <link>http://tellme.tokyo/post/2015/06/03/macbook/</link>
       <pubDate>Wed, 03 Jun 2015 09:44:59 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/06/03/macbook/</guid>
+      <guid>http://tellme.tokyo/post/2015/06/03/macbook/</guid>
       <description>
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/top.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/top.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;&lt;sup&gt;5&lt;/sup&gt;&amp;frasl;&lt;sub&gt;20&lt;/sub&gt; に「新しい MacBook」が届いた．Apple のオンラインの &lt;a href=&#34;http://store.apple.com/jp/buy-mac/macbook&#34;&gt;Store&lt;/a&gt; で，実際にポチったのは4/12なので届くのには1ヶ月以上かかったことになる．&lt;/p&gt;
 
 &lt;p&gt;スペックはこの通りだ．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/spec.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/spec.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;CPU を最大の 1.3GHz に引き上げた．処理スピードは速いに越したことはない．それと，ここに載っていない変更点として，キーボードを US 配列にした．これはデザイン的な動機もあるが，主として私の用途がプログラミング関連だからだ．デスクトップ PC にも US 配列のキーボードを使用している．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/compare.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/compare.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;h1 id=&#34;why:bc721527f93562e0bade042c76b30844&#34;&gt;Why&lt;/h1&gt;
@@ -821,7 +821,7 @@ endif
 
 &lt;p&gt;満足か，後悔か．もちろん大満足である．&lt;strong&gt;とにかく軽くて小さい Mac PC（UNIX 端末）が欲しい人にはピッタリ&lt;/strong&gt;なノート PC だと思う．賛否両論あるポイントを中心にレビューしてみる．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/starbucks.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/starbucks.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;h2 id=&#34;usb-c:bc721527f93562e0bade042c76b30844&#34;&gt;USB-C&lt;/h2&gt;
@@ -871,7 +871,7 @@ endif
 
 &lt;p&gt;それくらいにはパワーがあると思っていい．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/desktop.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/desktop.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;しかし，Photoshop などの Adobe 製品を多数立ち上げて，Xcode や Eclipse などの IDE で開発して，YouTuber のような動画編集をバリバリして…というような人には向かないかもしれない．もしかしたらある程度は耐えられるのかもしれないが，やったことがないので分からないとしか言えない．そもそも，そういう用途向けには MacBook Pro というラインナップが用意されている．あれは 13 inch でも 1kg ちょっとと，パワーがあるくせに軽くて良い．MacBook の圧倒的手軽さには勝てないが．&lt;/p&gt;
@@ -882,7 +882,7 @@ endif
 
 &lt;p&gt;実際のところ，その心配は無用だった．個人差はあれど，慣れるとむしろこっちのほうが打ちやすい．しかも2,3日で慣れた．ただ，矢印キーについては非常に慣れづらい変更になっているため，はやく Emacs ライクなキーバインドに慣れたほうがいい．Mac OS はデフォルトで Ctrl-A/E/F/B/N/P などのキーバインドをサポートしている．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/keyboard.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/keyboard.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;また，個々のキーの下に LED が配置されたらしく，発色がとても綺麗だ．&lt;/p&gt;
@@ -917,7 +917,7 @@ endif
 
 &lt;p&gt;このマシンを買うまで，Mac mini (Mid 2012) と MacBook Air (13 inch, Mid 2012) の環境を持っていた．しかし，MacBook を購入してからは，家では外部ディスプレイにつなぐスタイルに変わり，まさかの MacBook メインマシン状態が続いている（本当は iMac 5K が欲しい）．それでいてもパワー不足を感じさせない MacBook は使い方次第ではパワフルにもこなす器用な野郎といったところだ（ただし，1.3GHz に変更している）．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/tsutaya.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/tsutaya.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;iPhone ユーザなら少なからずあるであろう，旧端末をみると「ダサい」と感じるアレが Mac にも来たと思っていい．iPhone 6 ユーザなら iPhone 5s/5 を，iPhone 5s/5 ユーザなら iPhone 4s/4 を見たときに「ショボ！」とか「ダッサ！」と思っただろう．今回の MacBook がそれだ．MacBook Air/Pro のキーボードなどをみたときにダサさしか感じない．それだけ，MacBook が洗練されているように見え，買ったことを満足させる UX になっていると言える．&lt;/p&gt;
@@ -926,10 +926,10 @@ endif
     
     <item>
       <title>Golang でコマンドラインにゴミ箱を実装した話</title>
-      <link>http://localhost:1313/post/2015/05/22/gomi/</link>
+      <link>http://tellme.tokyo/post/2015/05/22/gomi/</link>
       <pubDate>Fri, 22 May 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://localhost:1313/post/2015/05/22/gomi/</guid>
+      <guid>http://tellme.tokyo/post/2015/05/22/gomi/</guid>
       <description>
 
 &lt;h1 id=&#34;まえがき:562e4d040771234bd98b731edec0bf65&#34;&gt;まえがき&lt;/h1&gt;
@@ -1040,7 +1040,7 @@ foo
 
 &lt;h1 id=&#34;gomi:562e4d040771234bd98b731edec0bf65&#34;&gt;gomi&lt;/h1&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/gomi/master/images/gomi_logo.png&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/gomi/logo.png&#34; alt=&#34;&#34; /&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;ul&gt;
@@ -1072,7 +1072,7 @@ foo
 
 &lt;p&gt;これだけでもかなり便利です．下の GIF を参照されたい．&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/gomi/master/images/gomi.gif&#34; alt=&#34;b4b4r07/gomi&#34; /&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/b4b4r07/gomi&#34; title=&#34;b4b4r07/gomi&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/b4b4r07/screenshots/master/gomi/demo.gif&#34; alt=&#34;b4b4r07/gomi&#34; /&gt;
 &lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;めっちゃ便利．&lt;/p&gt;
