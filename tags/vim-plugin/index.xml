@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Vim Plugin on TELLME.TOKYO</title>
-    <link>http://tellme.tokyo/tags/vim-plugin/</link>
+    <link>http://localhost:1313/tags/vim-plugin/</link>
     <description>Recent content in Vim Plugin on TELLME.TOKYO</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 17 Jun 2015 23:10:42 +0900</lastBuildDate>
-    <atom:link href="http://tellme.tokyo/tags/vim-plugin/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/vim-plugin/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Vim プラグイン開発の Tips</title>
-      <link>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</link>
+      <link>http://localhost:1313/post/2015/06/17/vim_plugin_on/</link>
       <pubDate>Wed, 17 Jun 2015 23:10:42 +0900</pubDate>
       
-      <guid>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</guid>
+      <guid>http://localhost:1313/post/2015/06/17/vim_plugin_on/</guid>
       <description>
 
 &lt;p&gt;プラグイン開発が盛んなエディタの一つに Vim がある．&lt;/p&gt;
@@ -95,14 +95,14 @@ endif
 &lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:true&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/vim_plugin_on/true.png&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/vim_plugin_on/true.png&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;g:vimrc_plugin_on == s:false&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/vim_plugin_on/false.png&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/vim_plugin_on/false.png&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;画像のとおり &lt;code&gt;true&lt;/code&gt; のときは @thinca さん作の &lt;a href=&#34;https://github.com/thinca/vim-splash&#34;&gt;vim-splash&lt;/a&gt; が読み込まれ，AA が表示されている．一方で，&lt;code&gt;false&lt;/code&gt; のとき，つまり &lt;code&gt;.development.vim&lt;/code&gt; が存在するとき（プラグイン開発時）にはそれが読み込まれていないことがわかる．&lt;/p&gt;

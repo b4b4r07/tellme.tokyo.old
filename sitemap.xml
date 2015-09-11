@@ -2,33 +2,43 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://tellme.tokyo/</loc>
-    <lastmod>2015-07-16T19:02:20+09:00</lastmod>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2015-08-02T21:43:42+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://tellme.tokyo/post/2015/07/16/dotfiles/</loc>
+    <loc>http://localhost:1313/post/2015/08/02/shellscript/</loc>
+    <lastmod>2015-08-02T21:43:42+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://localhost:1313/post/2015/07/16/dotfiles/</loc>
     <lastmod>2015-07-16T19:02:20+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://tellme.tokyo/post/2015/06/23/unix_cli_tool_go/</loc>
+    <loc>http://localhost:1313/post/2015/06/26/hogehoge/</loc>
+    <lastmod>2015-06-26T22:14:59+09:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://localhost:1313/post/2015/06/23/unix_cli_tool_go/</loc>
     <lastmod>2015-06-23T15:47:51+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://tellme.tokyo/post/2015/06/17/vim_plugin_on/</loc>
+    <loc>http://localhost:1313/post/2015/06/17/vim_plugin_on/</loc>
     <lastmod>2015-06-17T23:10:42+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://tellme.tokyo/post/2015/06/03/macbook/</loc>
+    <loc>http://localhost:1313/post/2015/06/03/macbook/</loc>
     <lastmod>2015-06-03T09:44:59+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://tellme.tokyo/post/2015/05/22/gomi/</loc>
+    <loc>http://localhost:1313/post/2015/05/22/gomi/</loc>
     <lastmod>2015-05-22T00:00:00+09:00</lastmod>
   </url>
   

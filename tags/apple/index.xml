@@ -2,34 +2,34 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Apple on TELLME.TOKYO</title>
-    <link>http://tellme.tokyo/tags/apple/</link>
+    <link>http://localhost:1313/tags/apple/</link>
     <description>Recent content in Apple on TELLME.TOKYO</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 03 Jun 2015 09:44:59 +0900</lastBuildDate>
-    <atom:link href="http://tellme.tokyo/tags/apple/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/apple/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>MacBook 12 inch を買った</title>
-      <link>http://tellme.tokyo/post/2015/06/03/macbook/</link>
+      <link>http://localhost:1313/post/2015/06/03/macbook/</link>
       <pubDate>Wed, 03 Jun 2015 09:44:59 +0900</pubDate>
       
-      <guid>http://tellme.tokyo/post/2015/06/03/macbook/</guid>
+      <guid>http://localhost:1313/post/2015/06/03/macbook/</guid>
       <description>
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/top.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/top.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;&lt;sup&gt;5&lt;/sup&gt;&amp;frasl;&lt;sub&gt;20&lt;/sub&gt; に「新しい MacBook」が届いた．Apple のオンラインの &lt;a href=&#34;http://store.apple.com/jp/buy-mac/macbook&#34;&gt;Store&lt;/a&gt; で，実際にポチったのは4/12なので届くのには1ヶ月以上かかったことになる．&lt;/p&gt;
 
 &lt;p&gt;スペックはこの通りだ．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/spec.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/spec.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;CPU を最大の 1.3GHz に引き上げた．処理スピードは速いに越したことはない．それと，ここに載っていない変更点として，キーボードを US 配列にした．これはデザイン的な動機もあるが，主として私の用途がプログラミング関連だからだ．デスクトップ PC にも US 配列のキーボードを使用している．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/compare.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/compare.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;h1 id=&#34;why:bc721527f93562e0bade042c76b30844&#34;&gt;Why&lt;/h1&gt;
@@ -51,7 +51,7 @@
 
 &lt;p&gt;満足か，後悔か．もちろん大満足である．&lt;strong&gt;とにかく軽くて小さい Mac PC（UNIX 端末）が欲しい人にはピッタリ&lt;/strong&gt;なノート PC だと思う．賛否両論あるポイントを中心にレビューしてみる．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/starbucks.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/starbucks.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;h2 id=&#34;usb-c:bc721527f93562e0bade042c76b30844&#34;&gt;USB-C&lt;/h2&gt;
@@ -101,7 +101,7 @@
 
 &lt;p&gt;それくらいにはパワーがあると思っていい．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/desktop.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/desktop.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;しかし，Photoshop などの Adobe 製品を多数立ち上げて，Xcode や Eclipse などの IDE で開発して，YouTuber のような動画編集をバリバリして…というような人には向かないかもしれない．もしかしたらある程度は耐えられるのかもしれないが，やったことがないので分からないとしか言えない．そもそも，そういう用途向けには MacBook Pro というラインナップが用意されている．あれは 13 inch でも 1kg ちょっとと，パワーがあるくせに軽くて良い．MacBook の圧倒的手軽さには勝てないが．&lt;/p&gt;
@@ -112,7 +112,7 @@
 
 &lt;p&gt;実際のところ，その心配は無用だった．個人差はあれど，慣れるとむしろこっちのほうが打ちやすい．しかも2,3日で慣れた．ただ，矢印キーについては非常に慣れづらい変更になっているため，はやく Emacs ライクなキーバインドに慣れたほうがいい．Mac OS はデフォルトで Ctrl-A/E/F/B/N/P などのキーバインドをサポートしている．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/keyboard.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/keyboard.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;また，個々のキーの下に LED が配置されたらしく，発色がとても綺麗だ．&lt;/p&gt;
@@ -147,7 +147,7 @@
 
 &lt;p&gt;このマシンを買うまで，Mac mini (Mid 2012) と MacBook Air (13 inch, Mid 2012) の環境を持っていた．しかし，MacBook を購入してからは，家では外部ディスプレイにつなぐスタイルに変わり，まさかの MacBook メインマシン状態が続いている（本当は iMac 5K が欲しい）．それでいてもパワー不足を感じさせない MacBook は使い方次第ではパワフルにもこなす器用な野郎といったところだ（ただし，1.3GHz に変更している）．&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://tellme.tokyo/images/macbook/tsutaya.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/macbook/tsutaya.jpg&#34; alt=&#34;&#34; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;iPhone ユーザなら少なからずあるであろう，旧端末をみると「ダサい」と感じるアレが Mac にも来たと思っていい．iPhone 6 ユーザなら iPhone 5s/5 を，iPhone 5s/5 ユーザなら iPhone 4s/4 を見たときに「ショボ！」とか「ダッサ！」と思っただろう．今回の MacBook がそれだ．MacBook Air/Pro のキーボードなどをみたときにダサさしか感じない．それだけ，MacBook が洗練されているように見え，買ったことを満足させる UX になっていると言える．&lt;/p&gt;
